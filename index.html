@@ -2558,7 +2558,550 @@
       .print-foot { display: block; }
       .summary-note { color: #333333; }
 
-      /* When the full report is open, print the report instead of the summary. */
+      
+    /* =========================================================
+       Goldfish Review Enhancements
+       1. Question Severities & Zero-Tolerance Knockout Logic
+       2. Audit Grading Bands & Executive Visuals
+       3. In-Checklist Live Search & Filters
+       4. 1-Click Fast CAP Linking
+       5. Digital Signatures & Exit Meeting Sign-Off
+       6. Photo Annotation Markup & Captions
+       7. Storage Health & Portability
+       ========================================================= */
+
+    /* Severity tags */
+    .sev-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .sev-critical {
+      background: #FEE2E2;
+      color: #991B1B;
+      border: 1px solid #FCA5A5;
+    }
+    .sev-major {
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FCD34D;
+    }
+    .chip-critical {
+      background: #FEE2E2 !important;
+      color: #991B1B !important;
+      font-weight: 700;
+      border: 1px solid #FCA5A5 !important;
+    }
+    .chip-major {
+      background: #FEF3C7 !important;
+      color: #92400E !important;
+      border: 1px solid #FCD34D !important;
+    }
+
+    /* Knockout warning banner */
+    .knockout-banner {
+      background: #FEF2F2;
+      border: 2px solid #EF4444;
+      color: #991B1B;
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 13px;
+      line-height: 1.5;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      animation: pulseRed 2.5s infinite;
+    }
+    .knockout-banner strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 2px;
+      color: #7F1D1D;
+    }
+    .knockout-icon {
+      font-size: 24px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    /* Grade Hero & Badges */
+    .grade-hero {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 18px 0 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .grade-hero-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .grade-letter-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 58px;
+      border-radius: 12px;
+      font-size: 30px;
+      font-weight: 800;
+      color: #FFF;
+      flex-shrink: 0;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .grade-badge-A { background: var(--green); }
+    .grade-badge-B { background: var(--teal); }
+    .grade-badge-C { background: var(--clay); }
+    .grade-badge-D { background: var(--rust); }
+    .grade-badge-knockout { background: #DC2626; animation: pulseRed 2s infinite; }
+    .grade-badge-neutral { background: var(--slate); }
+
+    @keyframes pulseRed {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
+    }
+
+    .grade-hero-info h3 {
+      margin: 0 0 4px 0;
+      font-size: 19px;
+      color: var(--ink);
+    }
+    .grade-hero-info p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--slate);
+    }
+    .grade-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .grade-pill-A { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+    .grade-pill-B { background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+    .grade-pill-C { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
+    .grade-pill-D { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+
+    /* Department Scorecard (Horizontal Bar Chart) */
+    .dept-scorecard {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .dept-scorecard h3 {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      color: var(--ink);
+    }
+    .dept-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .dept-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+    }
+    .dept-name {
+      width: 240px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--ink);
+      font-weight: 500;
+    }
+    .dept-bar-track {
+      flex: 1;
+      height: 12px;
+      background: #E5E7EB;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    .dept-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.4s ease;
+    }
+    .dept-pct {
+      width: 52px;
+      text-align: right;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    /* In-Checklist Live Search & Filter Bar */
+    .session-filter-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+    }
+    .session-search-input {
+      width: 100%;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+      background: #F9FAFB;
+      box-sizing: border-box;
+    }
+    .session-search-input:focus {
+      border-color: var(--teal);
+      background: #FFF;
+      box-shadow: 0 0 0 2px rgba(31, 111, 120, 0.15);
+    }
+    .session-filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .s-chip {
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--line);
+      background: #FFF;
+      color: var(--slate);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .s-chip:hover {
+      background: var(--mist);
+      color: var(--ink);
+    }
+    .s-chip.is-active {
+      background: var(--teal);
+      color: #FFF;
+      border-color: var(--teal);
+    }
+
+    /* 1-Click Fast CAP Prompt in Question Card */
+    .q-cap-prompt {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: #FEF2F2;
+      border: 1px dashed #FCA5A5;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .q-cap-prompt span {
+      font-size: 12px;
+      color: #991B1B;
+      font-weight: 600;
+    }
+    .q-cap-linked {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      gap: 10px;
+    }
+    .cap-tag {
+      color: #166534;
+      font-weight: 600;
+    }
+
+    /* Digital Signature Pad */
+    .signoff-section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      margin: 24px 0;
+    }
+    .signoff-section h3 {
+      margin: 0 0 8px 0;
+      font-size: 17px;
+      color: var(--ink);
+    }
+    .signoff-intro {
+      font-size: 13px;
+      color: var(--slate);
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+    .signoff-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .sig-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #FAFAFA;
+      display: flex;
+      flex-direction: column;
+    }
+    .sig-card h4 {
+      margin: 0 0 8px 0;
+      font-size: 12px;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .sig-box {
+      height: 100px;
+      border: 1px dashed #CBD5E1;
+      background: #FFF;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .sig-img {
+      max-height: 90px;
+      max-width: 95%;
+      object-fit: contain;
+    }
+    .sig-placeholder {
+      font-size: 12px;
+      color: #94A3B8;
+      font-style: italic;
+    }
+    .sig-meta {
+      font-size: 12px;
+      color: var(--ink);
+      line-height: 1.4;
+      margin-bottom: 10px;
+      flex: 1;
+    }
+    .sig-meta strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    /* Canvas modal */
+    .sig-canvas-wrap {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #FFF;
+      touch-action: none;
+      cursor: crosshair;
+      margin: 14px 0;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .sig-canvas {
+      width: 100%;
+      height: 170px;
+      display: block;
+    }
+
+    /* Photo Markup & Annotation Tool */
+    .markup-canvas-wrap {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #1E293B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+      max-height: 60vh;
+      margin: 12px 0;
+    }
+    .markup-canvas {
+      cursor: crosshair;
+      touch-action: none;
+      max-width: 100%;
+      display: block;
+    }
+    .markup-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #F3F4F6;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+    }
+    .markup-btn {
+      padding: 5px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      background: #FFF;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .markup-btn.is-active {
+      background: var(--teal);
+      color: #FFF;
+      border-color: var(--teal);
+    }
+    .markup-color-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #FFF;
+      box-shadow: 0 0 0 1px #CBD5E1;
+      cursor: pointer;
+    }
+    .markup-color-dot.is-active {
+      box-shadow: 0 0 0 2px var(--teal);
+    }
+
+    /* Photo Captions & Timestamps */
+    .photo-thumb-card {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      margin: 6px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 6px;
+      background: #FFF;
+      vertical-align: top;
+      max-width: 170px;
+    }
+    .photo-thumb-card img {
+      border-radius: 4px;
+      display: block;
+      width: 150px;
+      height: 100px;
+      object-fit: cover;
+    }
+    .photo-badge-date {
+      font-size: 10px;
+      color: var(--slate);
+      margin-top: 4px;
+    }
+    .photo-caption-text {
+      font-size: 11px;
+      color: var(--ink);
+      margin-top: 3px;
+      word-break: break-word;
+      font-style: italic;
+    }
+    .photo-btn-bar {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .photo-mini-btn {
+      flex: 1;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 6px;
+      background: #F3F4F6;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .photo-mini-btn:hover {
+      background: var(--mist);
+    }
+
+    /* Sidebar Storage Health Meter */
+    .sidebar-storage {
+      margin: 12px 14px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.03);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-size: 11px;
+    }
+    .storage-head {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      color: var(--slate);
+      font-weight: 600;
+    }
+    .storage-track {
+      height: 6px;
+      background: #E2E8F0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .storage-bar {
+      height: 100%;
+      background: var(--teal);
+      width: 5%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    .storage-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .sidebar-btn {
+      flex: 1;
+      padding: 4px 6px;
+      font-size: 10px;
+      font-weight: 600;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      background: #FFF;
+      cursor: pointer;
+      text-align: center;
+    }
+    .sidebar-btn:hover {
+      background: var(--mist);
+    }
+
+    /* Print optimizations for new blocks */
+    @media print {
+      .signoff-section,
+      .report-signoff,
+      .dept-scorecard,
+      .report-dept-scorecard,
+      .grade-hero,
+      .report-grade-banner {
+        break-inside: avoid !important;
+      }
+      .session-filter-bar,
+      .q-cap-prompt,
+      .photo-btn-bar,
+      .sidebar-storage,
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* When the full report is open, print the report instead of the summary. */
       body.print-report .view-summary { display: none !important; }
 
       body.print-report .view-report {
@@ -2592,6 +3135,498 @@
         background: #EEF2F3 !important;
       }
     }
+
+    /* =========================================================
+       Stage 15 Enhancements:
+       1. Audit Finalization & Read-Only Lock
+       2. Global Multi-Section Search
+       3. CAPA Overdue Aging & Escalation
+       4. 1-Click Photo Annex (.zip)
+       5. Re-Audit Branching & Trend Comparison
+       6. Hands-Free Voice-to-Text Dictation
+       7. Configurable Target Pass Mark
+       ========================================================= */
+
+    /* Lock banner & locked controls */
+    .pill-locked {
+      background: #F1F5F9;
+      color: #334155;
+      border: 1px solid #94A3B8;
+      font-weight: 700;
+    }
+    .lock-banner {
+      background: #F8FAFC;
+      border: 2px solid #64748B;
+      color: #1E293B;
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    body.is-audit-locked .hide-when-locked {
+      display: none !important;
+    }
+    body.is-audit-locked textarea:not(.allow-edit-when-locked) {
+      background: #F1F5F9 !important;
+      cursor: not-allowed;
+    }
+
+    /* Global Search Section Groups */
+    .search-sec-group {
+      margin-bottom: 24px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .search-sec-title {
+      background: #F8FAFC;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--teal-deep);
+      margin: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* CAPA Overdue Aging Chips */
+    .chip-overdue {
+      background: #FEE2E2 !important;
+      color: #991B1B !important;
+      border: 1px solid #EF4444 !important;
+      font-weight: 700 !important;
+      animation: pulseRed 2s infinite;
+    }
+    .chip-due-soon {
+      background: #FEF3C7 !important;
+      color: #92400E !important;
+      border: 1px solid #F59E0B !important;
+      font-weight: 600 !important;
+    }
+
+    /* Re-Audit Progress Delta Banner */
+    .re-audit-banner {
+      background: #F0FDF4;
+      border: 1px solid #86EFAC;
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      margin: 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .re-audit-icon {
+      font-size: 28px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .re-audit-banner h4 {
+      margin: 0 0 4px 0;
+      font-size: 14px;
+      color: #14532D;
+    }
+    .re-audit-banner p {
+      margin: 0;
+      font-size: 13px;
+      color: #166534;
+    }
+    .delta-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+    .delta-pos {
+      background: #DCFCE7;
+      color: #15803D;
+      border: 1px solid #86EFAC;
+    }
+    .delta-neg {
+      background: #FEE2E2;
+      color: #B91C1C;
+      border: 1px solid #FCA5A5;
+    }
+
+    /* Voice Dictation Button */
+    .voice-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: #FFF;
+      cursor: pointer;
+      font-size: 13px;
+      vertical-align: middle;
+      margin-left: 6px;
+      transition: all 0.2s ease;
+    }
+    .voice-btn:hover {
+      background: #F1F5F9;
+      border-color: var(--teal);
+    }
+    .voice-btn.is-listening {
+      background: #EF4444 !important;
+      color: #FFF !important;
+      border-color: #DC2626 !important;
+      animation: pulseRed 1s infinite;
+    }
+
+    /* Target Pass Score Badge */
+    .target-badge {
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 4px;
+    }
+    .target-pass { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+    .target-fail { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+
+    /* ===========================================================
+       Stage 16: Industrial Dark Mode, Supplier Trends, GPS & Logo
+       =========================================================== */
+    [data-theme="dark"] {
+      --ink:         #EDF3F5;
+      --slate:       #9BAEBC;
+      --mist:        #0E1418;
+      --paper:       #182229;
+      --harbor:      #2BB1BF;
+      --harbor-deep: #1F8D99;
+      --amber:       #F0B858;
+      --green:       #5CA780;
+      --clay:        #E28A4B;
+      --rust:        #D65A42;
+      --line:        #26333D;
+      --shadow:      0 1px 3px rgba(0,0,0,0.5), 0 10px 28px rgba(0,0,0,0.4);
+    }
+
+    [data-theme="dark"] body {
+      background-color: var(--mist);
+      color: var(--ink);
+    }
+
+    [data-theme="dark"] .topbar {
+      background: #141C22;
+      border-bottom-color: var(--line);
+    }
+
+    [data-theme="dark"] .sidebar {
+      background: #141C22;
+      border-right-color: var(--line);
+    }
+
+    [data-theme="dark"] .card,
+    [data-theme="dark"] .dash-kpi,
+    [data-theme="dark"] .dash-panel,
+    [data-theme="dark"] .dash-drill,
+    [data-theme="dark"] .modal,
+    [data-theme="dark"] .q-card,
+    [data-theme="dark"] .q-row {
+      background-color: var(--paper);
+      border-color: var(--line);
+    }
+
+    [data-theme="dark"] input[type="text"],
+    [data-theme="dark"] input[type="date"],
+    [data-theme="dark"] input[type="number"],
+    [data-theme="dark"] input[type="search"],
+    [data-theme="dark"] textarea,
+    [data-theme="dark"] select {
+      background-color: #121A20;
+      color: #EDF3F5;
+      border-color: #2E3E4B;
+    }
+
+    [data-theme="dark"] input:focus,
+    [data-theme="dark"] textarea:focus,
+    [data-theme="dark"] select:focus {
+      border-color: var(--harbor);
+      background-color: #15222B;
+    }
+
+    [data-theme="dark"] .btn-secondary {
+      background: #222F39;
+      color: #EDF3F5;
+      border-color: #354756;
+    }
+    [data-theme="dark"] .btn-secondary:hover {
+      background: #2B3B47;
+      border-color: #4A6174;
+    }
+
+    [data-theme="dark"] .btn-ghost {
+      color: var(--slate);
+    }
+    [data-theme="dark"] .btn-ghost:hover {
+      background: #24313B;
+      color: var(--ink);
+    }
+
+    [data-theme="dark"] .s-chip {
+      background: #222F39;
+      color: #EDF3F5;
+      border-color: #354756;
+    }
+    [data-theme="dark"] .s-chip.is-active {
+      background: var(--harbor);
+      color: #FFFFFF;
+    }
+
+    [data-theme="dark"] .summary-table th,
+    [data-theme="dark"] .dash-table th {
+      background: #141C22;
+      color: var(--slate);
+      border-color: var(--line);
+    }
+
+    [data-theme="dark"] .summary-table td,
+    [data-theme="dark"] .summary-table tfoot td,
+    [data-theme="dark"] .dash-table td {
+      border-color: var(--line);
+    }
+
+    [data-theme="dark"] .summary-table tfoot td {
+      background: #141C22;
+    }
+
+    [data-theme="dark"] .sig-box {
+      background: #121A20;
+      border-color: #2E3E4B;
+    }
+
+    [data-theme="dark"] .sig-canvas-wrap {
+      background: #121A20;
+    }
+
+    [data-theme="dark"] .markup-toolbar {
+      background: #141C22;
+      border-color: var(--line);
+    }
+
+    [data-theme="dark"] .markup-btn {
+      background: #222F39;
+      color: #EDF3F5;
+      border-color: #354756;
+    }
+
+    [data-theme="dark"] .photo-thumb-card {
+      background: #222F39;
+      border-color: #354756;
+    }
+
+    [data-theme="dark"] .nav-item:hover {
+      background: #222F39;
+    }
+    [data-theme="dark"] .nav-item.is-active {
+      background: rgba(43, 177, 191, 0.2);
+      color: var(--harbor);
+    }
+
+    [data-theme="dark"] .template-note {
+      background: #141C22;
+      border-color: var(--line);
+      color: var(--slate);
+    }
+
+    [data-theme="dark"] .editor-sec-head {
+      background: #162028;
+      border-color: var(--line);
+    }
+
+    /* Supplier Trends Styles */
+    .view-analytics {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .analytics-chart-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .analytics-tooltip {
+      pointer-events: none;
+      font-family: var(--font);
+    }
+
+    .delta-pill-pos {
+      background: rgba(78, 140, 106, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(78, 140, 106, 0.35);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 11px;
+      display: inline-block;
+    }
+
+    .delta-pill-neg {
+      background: rgba(180, 71, 47, 0.15);
+      color: var(--rust);
+      border: 1px solid rgba(180, 71, 47, 0.35);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 11px;
+      display: inline-block;
+    }
+
+    .delta-pill-neutral {
+      background: rgba(74, 90, 102, 0.15);
+      color: var(--slate);
+      border: 1px solid var(--line);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 11px;
+      display: inline-block;
+    }
+
+    /* GPS Badge */
+    .gps-stamp-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: rgba(31, 111, 120, 0.08);
+      border: 1px solid rgba(31, 111, 120, 0.25);
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: var(--font-mono, monospace);
+      color: var(--harbor-deep);
+      margin-top: 6px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .gps-stamp-badge:hover {
+      background: rgba(31, 111, 120, 0.15);
+    }
+    [data-theme="dark"] .gps-stamp-badge {
+      background: rgba(43, 177, 191, 0.15);
+      border-color: rgba(43, 177, 191, 0.35);
+      color: #5ED0DE;
+    }
+
+    /* Logo Preview & Report Logo */
+    .report-logo-banner {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .report-org-logo {
+      max-height: 76px;
+      max-width: 290px;
+      object-fit: contain;
+    }
+
+    @media print {
+      [data-theme="dark"] body,
+      [data-theme="dark"] .card,
+      [data-theme="dark"] .report-score {
+        background-color: #FFFFFF !important;
+        color: #1B2A33 !important;
+      }
+    }
+
+
+    /* ===========================================================
+       Stage 17: Walkthrough Timer, PDF Watermark & Demo Suite
+       =========================================================== */
+    .walkthrough-timer-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 14px;
+      background: rgba(31, 111, 120, 0.09);
+      border: 1px solid rgba(31, 111, 120, 0.22);
+      font-family: var(--font-mono, monospace);
+      font-size: 12px;
+      color: var(--harbor-deep);
+    }
+    [data-theme="dark"] .walkthrough-timer-box {
+      background: rgba(43, 177, 191, 0.15);
+      border-color: rgba(43, 177, 191, 0.35);
+      color: #5ED0DE;
+    }
+    .timer-btn {
+      padding: 1px 6px;
+      font-size: 11px;
+      border-radius: 4px;
+      border: 1px solid rgba(31, 111, 120, 0.3);
+      background: var(--paper);
+      color: var(--harbor-deep);
+      cursor: pointer;
+    }
+    .timer-btn:hover {
+      background: var(--mist);
+    }
+    [data-theme="dark"] .timer-btn {
+      background: #141C22;
+      border-color: #2E3E4B;
+      color: #5ED0DE;
+    }
+
+    /* Watermark Styling */
+    .report-watermark-overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-35deg);
+      font-size: 58px;
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: rgba(31, 111, 120, 0.05);
+      pointer-events: none;
+      z-index: 999;
+      white-space: nowrap;
+      text-align: center;
+      display: none;
+    }
+    .report-watermark-visible {
+      display: block;
+    }
+    @media print {
+      .report-watermark-visible {
+        display: block !important;
+        position: fixed !important;
+        top: 45% !important;
+        left: 50% !important;
+        color: rgba(0, 0, 0, 0.07) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+
+    .demo-badge {
+      display: inline-block;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: rgba(224, 163, 62, 0.15);
+      color: var(--amber);
+      border: 1px solid rgba(224, 163, 62, 0.3);
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+
   </style>
 </head>
 
@@ -2617,6 +3652,7 @@
     </div>
 
     <div class="topbar-right">
+      <button type="button" class="btn btn-ghost btn-sm" id="btnThemeToggle" title="Toggle Dark / Light Mode" aria-label="Toggle Dark / Light Mode"><span id="themeIcon">🌙</span> <span id="themeLabel">Dark</span></button>
       <span class="save-status" id="saveStatus" hidden aria-live="polite">
         <span class="save-dot" id="saveDot" aria-hidden="true"></span>
         <span id="saveText">Draft · not saved</span>
@@ -2635,6 +3671,9 @@
         <button type="button" class="nav-item" data-nav="home" id="navAudits">
           <span class="nav-icon" aria-hidden="true">▤</span><span>Audits</span>
         </button>
+        <button type="button" class="nav-item" data-nav="analytics" id="navAnalytics">
+          <span class="nav-icon" aria-hidden="true">📈</span><span>Supplier Trends</span>
+        </button>
         <button type="button" class="nav-item" data-nav="templates" id="navTemplates">
           <span class="nav-icon" aria-hidden="true">❐</span><span>Templates</span>
         </button>
@@ -2645,6 +3684,19 @@
 
       <p class="sidebar-label">At a glance</p>
       <div class="sidebar-mini" id="sidebarMini"></div>
+
+      <p class="sidebar-label">Storage</p>
+      <div class="sidebar-storage">
+        <div class="storage-head">
+          <span>Local storage</span>
+          <span id="storageUsedText">0 KB</span>
+        </div>
+        <div class="storage-track"><div class="storage-bar" id="storageBar"></div></div>
+        <div class="storage-actions">
+          <button type="button" class="sidebar-btn" id="btnSidebarBackup">Backup all</button>
+          <button type="button" class="sidebar-btn" id="btnSidebarRestore">Restore</button>
+        </div>
+      </div>
 
       <p class="sidebar-foot">
         <span class="dot" aria-hidden="true"></span>
@@ -2662,7 +3714,10 @@
       </div>
       <div class="home-actions">
         <button type="button" class="btn btn-secondary" id="btnTemplates">Templates</button>
+        <button type="button" class="btn btn-secondary" id="btnSupplierTrends">📈 Supplier Trends</button>
         <button type="button" class="btn btn-primary" id="btnNew">+ New audit</button>
+        <button type="button" class="btn btn-secondary" id="btnImportAuditPackage">Import package (.auditpro)</button>
+        <button type="button" class="btn btn-secondary" id="btnBackupAllAudits">Backup all</button>
       </div>
     </div>
 
@@ -2757,6 +3812,80 @@
         </div>
         <ul class="dash-list" id="dashTemplates"></ul>
       </section>
+    </div>
+  </section>
+
+  <!-- ===================== Supplier Trends Analytics view ===================== -->
+  <section class="view-analytics" id="analyticsView" hidden>
+    <div class="dash-head">
+      <div>
+        <p class="dash-eyebrow">Supplier & Factory Performance Intelligence</p>
+        <h1 class="page-title">Supplier Trends</h1>
+      </div>
+      <div class="dash-head-actions" style="display:flex;gap:10px;align-items:center;">
+        <label for="analyticsSupplierSelect" style="font-size:12px;font-weight:600;color:var(--slate);">Supplier / Factory:</label>
+        <select id="analyticsSupplierSelect" class="form-select" style="min-width:260px;"></select>
+      </div>
+    </div>
+
+    <div class="dash-kpi-grid" id="analyticsKpis" style="margin-bottom:24px;">
+      <!-- Dynamic KPI cards: Total Audits, Latest Score & Grade, Average Score, Trajectory Delta, CAPA Resolution Rate -->
+    </div>
+
+    <div class="dash-panels" style="display:grid;grid-template-columns:1fr;gap:20px;">
+      <div class="dash-panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Chronological Score Trajectory</h2>
+            <p class="panel-sub">Performance history across consecutive factory audits with target threshold</p>
+          </div>
+          <div id="analyticsChartLegend" style="display:flex;gap:12px;font-size:12px;align-items:center;"></div>
+        </div>
+        <div class="analytics-chart-container" id="analyticsTrajectoryChart" style="padding:16px 8px;min-height:280px;">
+          <!-- Inline responsive SVG chart -->
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-panels" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
+      <div class="dash-panel">
+        <div class="panel-head">
+          <h2 class="panel-title">Department Improvement Delta</h2>
+          <p class="panel-sub">Latest Audit vs Baseline Audit per department</p>
+        </div>
+        <div id="analyticsDeptDelta" style="padding:16px;"></div>
+      </div>
+      <div class="dash-panel">
+        <div class="panel-head">
+          <h2 class="panel-title">CAPA Resolution Velocity</h2>
+          <p class="panel-sub">Action item status & resolution breakdown</p>
+        </div>
+        <div id="analyticsCapaVelocity" style="padding:16px;"></div>
+      </div>
+    </div>
+
+    <div class="dash-panel" style="margin-top:20px;">
+      <div class="panel-head">
+        <h2 class="panel-title">Audit History for Supplier</h2>
+        <p class="panel-sub">Audits evaluated in this trajectory timeline</p>
+      </div>
+      <div class="dash-table-wrap">
+        <table class="dash-table" id="analyticsHistoryTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Audit Title</th>
+              <th>Factory</th>
+              <th>Auditor</th>
+              <th>Score</th>
+              <th>Grade</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -3086,7 +4215,15 @@
   <section class="view-session" id="sessionView" hidden>
     <div class="progress-wrap">
       <div class="progress-head">
-        <span id="progressLabel">Answered 0 of 0</span>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span id="progressLabel">Answered 0 of 0</span>
+          <div class="walkthrough-timer-box" id="walkthroughTimerBox">
+            <span aria-hidden="true">⏱️</span>
+            <span id="timerDisplay">00:00:00</span>
+            <button type="button" class="timer-btn" id="btnTimerToggle" title="Start/Pause Walkthrough Timer">▶ Start</button>
+            <button type="button" class="timer-btn" id="btnTimerReset" title="Reset Timer" hidden>↺</button>
+          </div>
+        </div>
         <span class="pct" id="progressPct">0%</span>
       </div>
       <div class="progress-track" role="progressbar" id="progressTrack"
@@ -3102,6 +4239,18 @@
         <button type="button" class="btn btn-ghost" id="btnNextSection"
                 aria-label="Next section" title="Next section">›</button>
         <span class="section-meta" id="sectionMeta"></span>
+      </div>
+
+      <div class="session-filter-bar no-print">
+        <input type="search" id="sessionSearchInput" class="session-search-input"
+               placeholder="🔍 Search questions, tests, keywords (e.g. fire, needle, safety)..." />
+        <div class="session-filter-chips" role="group" aria-label="Filter questions">
+          <button type="button" class="s-chip is-active" data-sfilter="all">All</button>
+          <button type="button" class="s-chip" data-sfilter="unanswered">Unanswered</button>
+          <button type="button" class="s-chip" data-sfilter="failed">Failed / 0%</button>
+          <button type="button" class="s-chip" data-sfilter="critical">Critical / Major</button>
+          <button type="button" class="s-chip" data-sfilter="flagged">With Notes / Photos</button>
+        </div>
       </div>
     </div>
 
@@ -3165,6 +4314,12 @@
 
     <p class="summary-note" id="sumNote"></p>
 
+    <!-- Executive Rating Grade Hero -->
+    <div class="grade-hero" id="sumGradeHero"></div>
+
+    <!-- Department Performance Scorecard -->
+    <div class="dept-scorecard" id="sumDeptScorecard"></div>
+
     <div class="table-wrap">
       <table class="summary-table">
         <thead>
@@ -3184,10 +4339,14 @@
 
     <p class="summary-note" id="sumExtra"></p>
 
+    <!-- Exit Meeting Digital Sign-off Section -->
+    <div class="signoff-section" id="sumSignoffSection"></div>
+
     <div class="summary-actions no-print">
       <button type="button" class="btn btn-primary" id="btnContinue">Continue audit</button>
       <button type="button" class="btn btn-secondary" id="btnFullReport">Full report</button>
       <button type="button" class="btn btn-secondary" id="btnExportXlsx">Export Excel</button>
+      <button type="button" class="btn btn-secondary" id="btnExportPhotoAnnex">Photo annex (ZIP)</button>
       <button type="button" class="btn btn-secondary" id="btnSummaryActions">Corrective actions</button>
       <button type="button" class="btn btn-secondary" id="btnSummaryPractices">Good practices</button>
       <button type="button" class="btn btn-secondary" id="btnSummaryHome">Back to audits</button>
@@ -3201,6 +4360,17 @@
     <div class="report-toolbar no-print">
       <button type="button" class="btn btn-secondary" id="btnReportBack">‹ Back to summary</button>
       <button type="button" class="btn btn-secondary" id="btnReportExcel">Export Excel</button>
+      <button type="button" class="btn btn-secondary" id="btnReportPhotoAnnex">Photo annex (ZIP)</button>
+      <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--slate);">
+        Watermark:
+        <select id="reportWatermarkSelect" class="form-select" style="font-size:12px;padding:4px 8px;">
+          <option value="auto">Auto (from Audit Status)</option>
+          <option value="DRAFT · NOT FOR DISTRIBUTION">Draft · Not for distribution</option>
+          <option value="CONFIDENTIAL">Confidential</option>
+          <option value="OFFICIAL INSPECTION REPORT">Official Inspection Report</option>
+          <option value="none">None (No Watermark)</option>
+        </select>
+      </label>
       <button type="button" class="btn btn-primary" id="btnReportPrint">Print / Save as PDF</button>
     </div>
     <div class="report-paper" id="reportBody"></div>
@@ -3366,9 +4536,40 @@
             <input type="text" id="fProduct" autocomplete="off" placeholder="e.g. Terry towels" />
           </div>
 
-          <div class="field span-2">
+          <div class="field">
             <label for="fWorkers">Number of workers</label>
             <input type="text" id="fWorkers" inputmode="numeric" autocomplete="off" placeholder="e.g. 920" />
+          </div>
+
+          <div class="field">
+            <label for="fTargetScore">Target pass score (%)</label>
+            <input type="number" id="fTargetScore" min="1" max="100" value="75" />
+          </div>
+
+          <div class="field span-2">
+            <label>Factory GPS Geolocation</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="text" id="fGpsCoords" readonly placeholder="Not recorded" style="flex:1;font-family:monospace;" />
+              <button type="button" class="btn btn-secondary btn-sm" id="btnAcquireGps">📍 Acquire GPS</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="btnClearGps" hidden title="Clear GPS">✕</button>
+            </div>
+            <p class="field-hint" id="fGpsHint">Captures verifiable GPS coordinates from device location</p>
+          </div>
+
+          <div class="field span-2">
+            <label>Report Cover / Client Logo (optional)</label>
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+              <div id="fLogoPreviewBox" style="display:none;background:#FFFFFF;padding:4px 8px;border:1px solid var(--line);border-radius:4px;">
+                <img id="fLogoPreviewImg" src="" alt="Logo preview" style="max-height:36px;max-width:110px;object-fit:contain;vertical-align:middle;" />
+              </div>
+              <input type="file" id="fLogoFile" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display:none;" />
+              <button type="button" class="btn btn-secondary btn-sm" id="btnChooseLogo">Choose Logo...</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="btnRemoveLogo" hidden>Remove Logo</button>
+              <label style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--slate);cursor:pointer;">
+                <input type="checkbox" id="fSetDefaultLogo" /> Set as default for all audits
+              </label>
+            </div>
+            <p class="field-hint">Embedded on PDF report cover sheet and summary header</p>
           </div>
         </div>
 
@@ -3453,6 +4654,15 @@
           <div class="field span-2">
             <label for="tType">Answer type</label>
             <select id="tType"></select>
+          </div>
+
+          <div class="field span-2">
+            <label for="tSeverity">Question severity</label>
+            <select id="tSeverity">
+              <option value="minor">Standard / Minor</option>
+              <option value="major">Major (High Priority)</option>
+              <option value="critical">Critical (Zero Tolerance / Knockout)</option>
+            </select>
           </div>
         </div>
 
@@ -3603,6 +4813,111 @@
     </div>
   </div>
 
+  <!-- ===================== Digital Signature Modal ===================== -->
+  <div class="modal-overlay" id="sigModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="sigModalTitle">
+      <div class="modal-head">
+        <h2 id="sigModalTitle">Capture digital signature</h2>
+        <button type="button" class="iconbtn" id="btnCloseSigModal" aria-label="Close">×</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="sigName">Signatory full name *</label>
+          <input type="text" id="sigName" autocomplete="off" placeholder="e.g. John Doe" />
+        </div>
+
+        <div class="field">
+          <label for="sigTitle">Title / designation</label>
+          <input type="text" id="sigTitle" autocomplete="off" placeholder="e.g. Factory General Manager" />
+        </div>
+
+        <div class="field span-2">
+          <label for="sigDate">Date signed</label>
+          <input type="date" id="sigDate" />
+        </div>
+      </div>
+
+      <p class="field-label" style="margin-top:12px; font-weight:600; font-size:13px;">Draw signature below (mouse or stylus/finger) *</p>
+      <div class="sig-canvas-wrap">
+        <canvas id="sigCanvas" width="500" height="170" class="sig-canvas"></canvas>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+        <button type="button" class="btn btn-ghost btn-sm" id="btnClearSig">Clear signature</button>
+        <span style="font-size:11px; color:var(--slate);">Smooth touch/mouse drawing</span>
+      </div>
+
+      <p class="form-error" id="sigFormError" hidden></p>
+
+      <div class="modal-actions" style="margin-top:16px;">
+        <button type="button" class="btn btn-ghost" id="btnCancelSig">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btnSaveSig">Save signature</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== Photo Markup Modal ===================== -->
+  <div class="modal-overlay" id="markupModal" hidden>
+    <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="markupModalTitle" style="max-width:850px;">
+      <div class="modal-head">
+        <h2 id="markupModalTitle">Annotate evidence photo</h2>
+        <button type="button" class="iconbtn" id="btnCloseMarkupModal" aria-label="Close">×</button>
+      </div>
+
+      <div class="markup-toolbar">
+        <span style="font-size:12px; font-weight:700; color:var(--slate); margin-right:4px;">Tool:</span>
+        <button type="button" class="markup-btn is-active" id="toolPen" data-tool="pen">✏️ Pen</button>
+        <button type="button" class="markup-btn" id="toolCircle" data-tool="circle">⭕ Circle / Defect</button>
+        <button type="button" class="markup-btn" id="toolArrow" data-tool="arrow">➔ Arrow</button>
+        <button type="button" class="markup-btn" id="toolRect" data-tool="rect">▢ Box</button>
+
+        <span style="margin: 0 8px; border-left:1px solid var(--line); height:16px;"></span>
+        <span style="font-size:12px; font-weight:700; color:var(--slate);">Color:</span>
+        <button type="button" class="markup-color-dot is-active" data-color="#DC2626" style="background:#DC2626;" title="Red"></button>
+        <button type="button" class="markup-color-dot" data-color="#E0A33E" style="background:#E0A33E;" title="Amber"></button>
+        <button type="button" class="markup-color-dot" data-color="#1F6F78" style="background:#1F6F78;" title="Teal"></button>
+        <button type="button" class="markup-color-dot" data-color="#FACC15" style="background:#FACC15;" title="Yellow"></button>
+
+        <span style="margin: 0 8px; border-left:1px solid var(--line); height:16px;"></span>
+        <button type="button" class="markup-btn" id="btnUndoMarkup">↶ Undo</button>
+        <button type="button" class="markup-btn" id="btnClearMarkup">Clear</button>
+      </div>
+
+      <div class="markup-canvas-wrap">
+        <canvas id="markupCanvas" class="markup-canvas"></canvas>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="btnCancelMarkup">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btnSaveMarkup">Save annotated photo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== Photo Caption Modal ===================== -->
+  <div class="modal-overlay" id="captionModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="captionModalTitle">
+      <div class="modal-head">
+        <h2 id="captionModalTitle">Edit photo caption</h2>
+        <button type="button" class="iconbtn" id="btnCloseCaptionModal" aria-label="Close">×</button>
+      </div>
+
+      <div class="field" style="margin-top:12px;">
+        <label for="photoCaptionInput">Caption / Observation note</label>
+        <input type="text" id="photoCaptionInput" placeholder="e.g. Broken needle guard on Sewing Line 2..." />
+      </div>
+
+      <div class="modal-actions" style="margin-top:16px;">
+        <button type="button" class="btn btn-ghost" id="btnCancelCaption">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btnSaveCaption">Save caption</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden picker for audit package import -->
+  <input type="file" id="auditPackageInput" accept=".auditpro,.json" hidden />
+
   <!-- ===================== Toast ===================== -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -3656,6 +4971,7 @@
         },
         {
           "id": "s1q5",
+          "severity": "critical",
           "text": "Do they have the procedure in place to ensure that customers are notified immidiately on the issues related to product safety or legality"
         },
         {
@@ -4625,6 +5941,53 @@
       var practicesTitle = document.getElementById("practicesTitle");
       var practicesSub = document.getElementById("practicesSub");
       var practicesList = document.getElementById("practicesList");
+
+      // Goldfish additions: severity, signatures, markup, captions, storage, search
+      var tSeverity = document.getElementById("tSeverity");
+      var sigModal = document.getElementById("sigModal");
+      var sigModalTitle = document.getElementById("sigModalTitle");
+      var sigName = document.getElementById("sigName");
+      var sigTitle = document.getElementById("sigTitle");
+      var sigDate = document.getElementById("sigDate");
+      var sigCanvas = document.getElementById("sigCanvas");
+      var btnClearSig = document.getElementById("btnClearSig");
+      var btnCancelSig = document.getElementById("btnCancelSig");
+      var btnSaveSig = document.getElementById("btnSaveSig");
+      var sigFormError = document.getElementById("sigFormError");
+      var btnCloseSigModal = document.getElementById("btnCloseSigModal");
+
+      var markupModal = document.getElementById("markupModal");
+      var markupModalTitle = document.getElementById("markupModalTitle");
+      var markupCanvas = document.getElementById("markupCanvas");
+      var btnCloseMarkupModal = document.getElementById("btnCloseMarkupModal");
+      var btnUndoMarkup = document.getElementById("btnUndoMarkup");
+      var btnClearMarkup = document.getElementById("btnClearMarkup");
+      var btnCancelMarkup = document.getElementById("btnCancelMarkup");
+      var btnSaveMarkup = document.getElementById("btnSaveMarkup");
+
+      var captionModal = document.getElementById("captionModal");
+      var captionModalTitle = document.getElementById("captionModalTitle");
+      var photoCaptionInput = document.getElementById("photoCaptionInput");
+      var btnCloseCaptionModal = document.getElementById("btnCloseCaptionModal");
+      var btnCancelCaption = document.getElementById("btnCancelCaption");
+      var btnSaveCaption = document.getElementById("btnSaveCaption");
+
+      var auditPackageInput = document.getElementById("auditPackageInput");
+      var btnImportAuditPackage = document.getElementById("btnImportAuditPackage");
+      var btnBackupAllAudits = document.getElementById("btnBackupAllAudits");
+      var btnSidebarBackup = document.getElementById("btnSidebarBackup");
+      var btnSidebarRestore = document.getElementById("btnSidebarRestore");
+
+      var storageUsedText = document.getElementById("storageUsedText");
+      var storageBar = document.getElementById("storageBar");
+
+      var sessionSearchInput = document.getElementById("sessionSearchInput");
+      var sumGradeHero = document.getElementById("sumGradeHero");
+      var sumDeptScorecard = document.getElementById("sumDeptScorecard");
+      var sumSignoffSection = document.getElementById("sumSignoffSection");
+
+      var sessionSearchQuery = "";
+      var sessionFilterMode = "all";
       var actionModal = document.getElementById("actionModal");
       var actionModalTitle = document.getElementById("actionModalTitle");
       var actionForm = document.getElementById("actionForm");
@@ -4694,6 +6057,7 @@
         var t = embeddedTemplate();
         return {
           version: 6,
+          companyLogo: "",
           audits: [],
           activeAuditId: null,
           templates: [t],
@@ -4848,6 +6212,7 @@
                   text: String(x.text || ""),
                   answerType: ANSWER_TYPES[x.answerType]
                     ? x.answerType : TEMPLATE.defaultAnswerType,
+                  severity: (x.severity === "critical" || x.severity === "major") ? x.severity : "minor",
                   custom: !!x.custom,
                   disabled: !!x.disabled
                 };
@@ -4903,6 +6268,7 @@
                 id: x.id,
                 text: x.text,
                 answerType: x.answerType,
+                severity: x.severity || "minor",
                 custom: !!x.custom
               };
             })
@@ -5060,6 +6426,18 @@
           productType: a.productType || "",
           workers: a.workers || "",
           templateId: a.templateId || a.templateKey || fallbackTemplateId || "",
+          isLocked: !!a.isLocked,
+          previousAuditId: typeof a.previousAuditId === "string" ? a.previousAuditId : "",
+          targetPassScore: typeof a.targetPassScore === "number" ? a.targetPassScore : (parseInt(a.targetPassScore, 10) || 75),
+          isDemo: !!a.isDemo,
+          timerSeconds: typeof a.timerSeconds === "number" ? a.timerSeconds : 0,
+          timerRunning: !!a.timerRunning,
+          timerStartedAt: a.timerStartedAt || null,
+          timerEndedAt: a.timerEndedAt || null,
+          geolocation: a.geolocation && typeof a.geolocation === "object" ? a.geolocation : null,
+          logo: typeof a.logo === "string" ? a.logo : "",
+          auditorSig: a.auditorSig && typeof a.auditorSig === "object" ? a.auditorSig : null,
+          repSig: a.repSig && typeof a.repSig === "object" ? a.repSig : null,
           answers: normalizeAnswers(a.answers),
           actions: normalizeActions(a.actions),
           practices: normalizePractices(a.practices),
@@ -5135,12 +6513,38 @@
         }
       }
 
+      function updateStorageMeter(len) {
+        if (!storageUsedText || !storageBar) { return; }
+        var bytes = len || 0;
+        if (!bytes) {
+          try {
+            bytes = (window.localStorage.getItem(STORE_KEY) || "").length * 2;
+          } catch (e) { bytes = 0; }
+        }
+        var kb = Math.round(bytes / 1024);
+        var mb = (bytes / (1024 * 1024)).toFixed(2);
+        storageUsedText.textContent = mb >= 1 ? mb + " MB" : kb + " KB";
+        var pct = Math.min(100, Math.round((bytes / (5 * 1024 * 1024)) * 100));
+        storageBar.style.width = Math.max(5, pct) + "%";
+        if (pct >= 80) {
+          storageBar.style.background = "#DC2626";
+        } else if (pct >= 60) {
+          storageBar.style.background = "#E0A33E";
+        } else {
+          storageBar.style.background = "var(--teal)";
+        }
+      }
+
       function saveState() {
         if (!storageOk) { return false; }
         try {
-          window.localStorage.setItem(STORE_KEY, JSON.stringify(state));
+          var raw = JSON.stringify(state);
+          window.localStorage.setItem(STORE_KEY, raw);
+          updateStorageMeter(raw.length);
           return true;
         } catch (e) {
+          console.error("Storage save failed:", e);
+          showToast("⚠️ Storage quota reached! Please export and archive audits.", 6000);
           return false;
         }
       }
@@ -5202,6 +6606,11 @@
           enabled: 0, sum: 0
         };
 
+        r.criticalFails = 0;
+        r.majorFails = 0;
+        r.minorFails = 0;
+        r.knockoutList = [];
+
         for (var i = 0; i < tests.length; i++) {
           var q = tests[i];
           var ans = audit.answers[q.id];
@@ -5217,9 +6626,22 @@
             r.answered++;
             r.scored++;
             r.sum += opt.score;
-            if (opt.score === 100) { r.full++; }
-            else if (opt.score === 0) { r.zero++; }
-            else { r.half++; }
+            if (opt.score === 100) {
+              r.full++;
+            } else if (opt.score === 0) {
+              r.zero++;
+              var sev = q.severity || "minor";
+              if (sev === "critical") {
+                r.criticalFails++;
+                r.knockoutList.push(q);
+              } else if (sev === "major") {
+                r.majorFails++;
+              } else {
+                r.minorFails++;
+              }
+            } else {
+              r.half++;
+            }
           } else {
             r.unanswered++;
           }
@@ -5242,7 +6664,8 @@
           counts: counts,
           denom: counts.enabled,
           numerator: counts.sum,
-          pct: pct
+          pct: pct,
+          hasKnockout: counts.criticalFails > 0
         };
       }
 
@@ -5282,6 +6705,399 @@
           ? (s.sum / s.enabled)
           : null;
         return s;
+      }
+
+      function getAuditGrade(scoreResult) {
+        if (!scoreResult || scoreResult.pct === null) {
+          return {
+            grade: "—",
+            label: "Not scored",
+            sublabel: "No scored answers yet",
+            tone: "neutral",
+            isKnockout: false
+          };
+        }
+        if (scoreResult.hasKnockout) {
+          return {
+            grade: "D",
+            label: "Grade D · Critical Non-Compliance",
+            sublabel: "Automatic Knockout: " + scoreResult.counts.criticalFails +
+              (scoreResult.counts.criticalFails === 1 ? " Critical defect" : " Critical defects") +
+              " failed (Zero Tolerance violation)",
+            tone: "knockout",
+            isKnockout: true
+          };
+        }
+        var pct = scoreResult.pct;
+        if (pct >= 85) {
+          return {
+            grade: "A",
+            label: "Grade A · Approved",
+            sublabel: "Low Risk — Factory meets international quality and technical compliance",
+            tone: "A",
+            isKnockout: false
+          };
+        } else if (pct >= 70) {
+          return {
+            grade: "B",
+            label: "Grade B · Conditionally Approved",
+            sublabel: "Medium Risk — Factory approved pending completion of Corrective Action Plan (CAP)",
+            tone: "B",
+            isKnockout: false
+          };
+        } else if (pct >= 50) {
+          return {
+            grade: "C",
+            label: "Grade C · High Risk",
+            sublabel: "High Risk — Substantial non-conformances; follow-up re-audit required within 90 days",
+            tone: "C",
+            isKnockout: false
+          };
+        } else {
+          return {
+            grade: "D",
+            label: "Grade D · Rejected",
+            sublabel: "Critical Risk — Failed audit; factory does not meet minimum technical standards",
+            tone: "D",
+            isKnockout: false
+          };
+        }
+      }
+
+      function renderDeptScorecardHtml(audit, sections) {
+        var rows = sections.map(function (sec) {
+          var s = sectionStats(audit, sec);
+          var pct = s.pct === null ? 0 : Math.round(s.pct);
+          var pctText = s.pct === null ? "—" : formatPct(s.pct) + "%";
+          var tone = s.pct === null ? "#9CA3AF" : (s.pct >= 85 ? "#4E8C6A" : (s.pct >= 70 ? "#1F6F78" : (s.pct >= 50 ? "#C4763A" : "#B4472F")));
+          return '<div class="dept-row">' +
+            '<span class="dept-name" title="' + escapeHtml(sec.name) + '">' +
+              sec.number + '. ' + escapeHtml(sec.name) +
+            '</span>' +
+            '<div class="dept-bar-track" title="' + s.answered + ' of ' + s.total + ' answered">' +
+              '<div class="dept-bar-fill" style="width:' + pct + '%; background:' + tone + ';"></div>' +
+            '</div>' +
+            '<span class="dept-pct" style="color:' + tone + ';">' + pctText + '</span>' +
+          '</div>';
+        }).join("");
+
+        return '<h3>Operational & Department Scorecard</h3>' +
+          '<div class="dept-grid">' + rows + '</div>';
+      }
+
+      function renderSignoffSectionHtml(audit) {
+        var aSig = audit.auditorSig;
+        var rSig = audit.repSig;
+
+        var aBox = aSig && aSig.dataUrl
+          ? '<img src="' + aSig.dataUrl + '" class="sig-img" alt="Auditor signature" />'
+          : '<span class="sig-placeholder">No signature captured yet</span>';
+
+        var rBox = rSig && rSig.dataUrl
+          ? '<img src="' + rSig.dataUrl + '" class="sig-img" alt="Representative signature" />'
+          : '<span class="sig-placeholder">No signature captured yet</span>';
+
+        return '<h3>Exit Meeting & Formal Sign-Off</h3>' +
+          '<p class="signoff-intro">Formal closing meeting verification under ISO 19011 audit standards. Signatures will be permanently watermarked onto the PDF Full Report.</p>' +
+          '<div class="signoff-grid">' +
+            '<div class="sig-card">' +
+              '<h4>Lead Auditor</h4>' +
+              '<div class="sig-box">' + aBox + '</div>' +
+              '<div class="sig-meta">' +
+                '<strong>' + escapeHtml(aSig && aSig.name ? aSig.name : (audit.auditor || "Lead Auditor")) + '</strong>' +
+                '<span>' + (aSig && aSig.title ? escapeHtml(aSig.title) : "Lead Quality Auditor") + '</span><br>' +
+                '<span>' + (aSig && aSig.date ? escapeHtml(formatDate(aSig.date)) : "Pending signature") + '</span>' +
+              '</div>' +
+              '<button type="button" class="btn btn-secondary btn-sm" data-sign-role="auditor">' +
+                (aSig && aSig.dataUrl ? "Re-sign" : "Sign as Auditor") +
+              '</button>' +
+            '</div>' +
+            '<div class="sig-card">' +
+              '<h4>Factory Management Representative</h4>' +
+              '<div class="sig-box">' + rBox + '</div>' +
+              '<div class="sig-meta">' +
+                '<strong>' + escapeHtml(rSig && rSig.name ? rSig.name : (audit.representative || "Factory Manager")) + '</strong>' +
+                '<span>' + (rSig && rSig.title ? escapeHtml(rSig.title) : "Factory Management Representative") + '</span><br>' +
+                '<span>' + (rSig && rSig.date ? escapeHtml(formatDate(rSig.date)) : "Pending signature") + '</span>' +
+              '</div>' +
+              '<button type="button" class="btn btn-secondary btn-sm" data-sign-role="rep">' +
+                (rSig && rSig.dataUrl ? "Re-sign" : "Sign as Factory Rep") +
+              '</button>' +
+            '</div>' +
+          '</div>';
+      }
+
+      function renderReportSignoffHtml(audit) {
+        var aSig = audit.auditorSig;
+        var rSig = audit.repSig;
+
+        var aBox = aSig && aSig.dataUrl
+          ? '<img src="' + aSig.dataUrl + '" style="max-height:80px; max-width:95%; object-fit:contain;" alt="Auditor signature" />'
+          : '<span style="font-size:12px; color:#9CA3AF; font-style:italic;">[Not signed digitally]</span>';
+
+        var rBox = rSig && rSig.dataUrl
+          ? '<img src="' + rSig.dataUrl + '" style="max-height:80px; max-width:95%; object-fit:contain;" alt="Representative signature" />'
+          : '<span style="font-size:12px; color:#9CA3AF; font-style:italic;">[Not signed digitally]</span>';
+
+        return '<div class="report-signoff" style="margin-top:30px; border-top:1px solid #D8E0E3; padding-top:20px; page-break-inside:avoid;">' +
+          '<h2 class="report-h2">Exit Meeting & Formal Acknowledgement</h2>' +
+          '<p style="font-size:12px; color:#4A5A66; line-height:1.5; margin-bottom:16px;">' +
+            'The undersigned parties have conducted and concluded the formal audit exit meeting. All non-conformances, scoring results, corrective action expectations, and target resolution timelines recorded in this report have been presented, reviewed, and mutually acknowledged.' +
+          '</p>' +
+          '<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">' +
+            '<div style="border:1px solid #D8E0E3; border-radius:6px; padding:14px; background:#FAFAFA;">' +
+              '<span style="font-size:11px; font-weight:700; color:#4A5A66; text-transform:uppercase;">Lead Auditor</span>' +
+              '<div style="height:85px; display:flex; align-items:center; justify-content:center; margin:8px 0; border-bottom:1px dashed #CBD5E1;">' + aBox + '</div>' +
+              '<div style="font-size:12px; color:#1B2A33; line-height:1.4;">' +
+                '<strong>' + escapeHtml(aSig && aSig.name ? aSig.name : (audit.auditor || "Lead Auditor")) + '</strong><br>' +
+                '<span>' + (aSig && aSig.title ? escapeHtml(aSig.title) : "Lead Quality Auditor") + '</span><br>' +
+                '<span style="font-size:11px; color:#6B7280;">Date: ' + (aSig && aSig.date ? escapeHtml(formatDate(aSig.date)) : formatDate(todayISO())) + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div style="border:1px solid #D8E0E3; border-radius:6px; padding:14px; background:#FAFAFA;">' +
+              '<span style="font-size:11px; font-weight:700; color:#4A5A66; text-transform:uppercase;">Factory Representative</span>' +
+              '<div style="height:85px; display:flex; align-items:center; justify-content:center; margin:8px 0; border-bottom:1px dashed #CBD5E1;">' + rBox + '</div>' +
+              '<div style="font-size:12px; color:#1B2A33; line-height:1.4;">' +
+                '<strong>' + escapeHtml(rSig && rSig.name ? rSig.name : (audit.representative || "Factory Manager")) + '</strong><br>' +
+                '<span>' + (rSig && rSig.title ? escapeHtml(rSig.title) : "Factory Management Representative") + '</span><br>' +
+                '<span style="font-size:11px; color:#6B7280;">Date: ' + (rSig && rSig.date ? escapeHtml(formatDate(rSig.date)) : formatDate(todayISO())) + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }
+
+      function findActionForTest(audit, testId) {
+        if (!audit || !Array.isArray(audit.actions)) { return null; }
+        for (var i = 0; i < audit.actions.length; i++) {
+          if (audit.actions[i].testId === testId) { return audit.actions[i]; }
+        }
+        return null;
+      }
+
+      function capOverdueInfo(action) {
+        if (!action || action.status === "Closed" || !action.dueDate) {
+          return { isOverdue: false, isDueSoon: false, text: "", chipClass: "" };
+        }
+        var today = new Date(todayISO());
+        var due = new Date(action.dueDate);
+        var diffDays = Math.round((today - due) / (1000 * 60 * 60 * 24));
+        if (diffDays > 0) {
+          return {
+            isOverdue: true,
+            isDueSoon: false,
+            days: diffDays,
+            text: "Overdue by " + diffDays + (diffDays === 1 ? " day" : " days"),
+            chipClass: "chip-overdue"
+          };
+        } else if (diffDays === 0) {
+          return {
+            isOverdue: false,
+            isDueSoon: true,
+            days: 0,
+            text: "Due today",
+            chipClass: "chip-due-soon"
+          };
+        } else if (diffDays >= -7) {
+          return {
+            isOverdue: false,
+            isDueSoon: true,
+            days: Math.abs(diffDays),
+            text: "Due in " + Math.abs(diffDays) + (Math.abs(diffDays) === 1 ? " day" : " days"),
+            chipClass: "chip-due-soon"
+          };
+        }
+        return { isOverdue: false, isDueSoon: false, text: "", chipClass: "" };
+      }
+
+      function dataUrlToUint8Array(dataUrl) {
+        var parts = dataUrl.split(",");
+        var bstr = atob(parts[1] || "");
+        var n = bstr.length;
+        var u8arr = new Uint8Array(n);
+        for (var i = 0; i < n; i++) {
+          u8arr[i] = bstr.charCodeAt(i);
+        }
+        return u8arr;
+      }
+
+      function exportPhotoAnnexZip(auditId) {
+        var audit = findAudit(auditId);
+        if (!audit) { return; }
+
+        var photoIds = {};
+        Object.keys(audit.answers || {}).forEach(function (k) {
+          (audit.answers[k].photos || []).forEach(function (pid) { photoIds[pid] = { type: "test", ref: k }; });
+        });
+        (audit.actions || []).forEach(function (a, idx) {
+          (a.issuePhotos || []).forEach(function (pid) { photoIds[pid] = { type: "cap-issue", ref: "CAP_" + (idx + 1) }; });
+          (a.proofPhotos || []).forEach(function (pid) { photoIds[pid] = { type: "cap-proof", ref: "CAP_" + (idx + 1) }; });
+        });
+        (audit.practices || []).forEach(function (p, idx) {
+          (p.photos || []).forEach(function (pid) { photoIds[pid] = { type: "practice", ref: "Practice_" + (idx + 1) }; });
+        });
+
+        var files = [];
+        var manifestLines = [
+          "Audit Pro — Photographic Evidence Annex",
+          "Audit Title: " + audit.title,
+          "Supplier: " + (audit.supplier || "N/A"),
+          "Factory: " + (audit.factory || "N/A"),
+          "Date: " + formatDate(audit.date || todayISO()),
+          "Auditor: " + (audit.auditor || "N/A"),
+          "Generated: " + nowISO(),
+          "--------------------------------------------------",
+          ""
+        ];
+
+        var pCount = 0;
+        Object.keys(photoIds).forEach(function (pid) {
+          var p = photoCache[pid];
+          if (!p || !p.dataUrl) { return; }
+          pCount++;
+          var info = photoIds[pid];
+          var safeCaption = (p.caption || "evidence").replace(/[\\/:*?"<>|]+/g, "_").slice(0, 30);
+          var filename = "Photo_" + pCount + "_" + info.ref + "_" + safeCaption + ".jpg";
+
+          try {
+            var bytes = dataUrlToUint8Array(p.dataUrl);
+            files.push({ name: filename, data: bytes });
+            manifestLines.push(filename + " | Ref: " + info.ref + " | Caption: " + (p.caption || "None") + " | Captured: " + (p.createdAt || "N/A"));
+          } catch (e) {}
+        });
+
+        if (files.length === 0) {
+          showToast("No evidence photos recorded in this audit to export.");
+          return;
+        }
+
+        manifestLines.push("", "Total Evidence Photos: " + files.length);
+        files.push({
+          name: "Manifest.txt",
+          data: xlsxUtf8(manifestLines.join("\r\n"))
+        });
+
+        var zipBytes = xlsxZip(files);
+        var blob = new Blob([zipBytes], { type: "application/zip" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "Audit Pro - Photo Annex - " + (audit.title || "audit").replace(/[\\/:*?"<>|]+/g, "-").slice(0, 40) + " - " + todayISO() + ".zip";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+        showToast("Photo annex exported with " + (files.length - 1) + " photos.");
+      }
+
+      function createFollowUpAudit(baseAuditId) {
+        var base = findAudit(baseAuditId);
+        if (!base) { return; }
+
+        var followUp = {
+          id: makeId("audit"),
+          title: "Follow-up Audit — " + (base.factory || base.title),
+          supplier: base.supplier,
+          factory: base.factory,
+          location: base.location,
+          representative: base.representative,
+          auditor: base.auditor,
+          date: todayISO(),
+          productType: base.productType,
+          workers: base.workers,
+          templateId: base.templateId,
+          targetPassScore: base.targetPassScore || 75,
+          previousAuditId: base.id,
+          isLocked: false,
+          answers: {},
+          actions: [],
+          practices: [],
+          auditorSig: null,
+          repSig: null,
+          lastQuestionId: "",
+          reportComments: "Follow-up audit verification conducted against baseline audit of " + formatDate(base.date) + ".",
+          terms: [],
+          createdAt: nowISO(),
+          updatedAt: nowISO()
+        };
+
+        // Carry over any unresolved corrective action items from baseline
+        (base.actions || []).forEach(function (a) {
+          if (a.status !== "Closed") {
+            followUp.actions.push({
+              id: makeId("action"),
+              sectionId: a.sectionId,
+              testId: a.testId,
+              issue: a.issue + " (Carried over from baseline audit)",
+              rootCause: a.rootCause,
+              corrective: a.corrective,
+              preventive: a.preventive,
+              owner: a.owner,
+              dueDate: a.dueDate,
+              priority: a.priority,
+              status: a.status,
+              issuePhotos: (a.issuePhotos || []).slice(),
+              proofPhotos: [],
+              createdAt: nowISO(),
+              updatedAt: nowISO()
+            });
+          }
+        });
+
+        state.audits.unshift(followUp);
+        state.activeAuditId = followUp.id;
+        saveState();
+        renderAudits();
+        updateDashboard();
+        showToast("Follow-up audit created! (" + followUp.actions.length + " open CAPs carried over)");
+        showSummaryFor(followUp.id);
+      }
+
+      function renderReAuditBannerHtml(audit) {
+        if (!audit.previousAuditId) { return ""; }
+        var base = findAudit(audit.previousAuditId);
+        if (!base) { return ""; }
+
+        var baseList = listForAudit(base);
+        var baseScore = computeScore(base, baseList.questions);
+        var baseGrade = getAuditGrade(baseScore);
+
+        var curList = listForAudit(audit);
+        var curScore = computeScore(audit, curList.questions);
+        var curGrade = getAuditGrade(curScore);
+
+        var diff = (curScore.pct !== null && baseScore.pct !== null)
+          ? Math.round((curScore.pct - baseScore.pct) * 10) / 10
+          : 0;
+
+        var deltaClass = diff >= 0 ? "delta-pos" : "delta-neg";
+        var deltaSign = diff > 0 ? "+" : "";
+
+        return '<div class="re-audit-banner">' +
+          '<span class="re-audit-icon" aria-hidden="true">📈</span>' +
+          '<div>' +
+            '<h4>Follow-Up Audit Verification vs. Baseline (' + formatDate(base.date) + ')</h4>' +
+            '<p>' +
+              'Baseline Score: <strong>' + (baseScore.pct === null ? "—" : formatPct(baseScore.pct) + "%") + ' (' + escapeHtml(baseGrade.grade) + ')</strong> ➔ ' +
+              'Current Score: <strong>' + (curScore.pct === null ? "—" : formatPct(curScore.pct) + "%") + ' (' + escapeHtml(curGrade.grade) + ')</strong>' +
+              '<span class="delta-badge ' + deltaClass + '">' + deltaSign + diff + '% Progress</span>' +
+            '</p>' +
+          '</div>' +
+        '</div>';
+      }
+
+      function renderTargetComparisonHtml(audit, score) {
+        var target = audit.targetPassScore || 75;
+        if (score.pct === null) { return ""; }
+        var margin = Math.round((score.pct - target) * 10) / 10;
+        var passed = !score.hasKnockout && score.pct >= target;
+        var sign = margin > 0 ? "+" : "";
+        var label = passed
+          ? 'PASSED · Meets ' + target + '% standard (' + sign + margin + '% margin)'
+          : 'FAILED · ' + (score.hasKnockout ? 'Zero-Tolerance Knockout Failure' : 'Below ' + target + '% standard (' + margin + '% deficit)');
+        return '<div class="target-badge ' + (passed ? 'target-pass' : 'target-fail') + '">' +
+          'Target: ' + target + '% · ' + label +
+        '</div>';
       }
 
       function statusOf(audit, tests) {
@@ -5363,10 +7179,17 @@
           tags.push('<span class="chip chip-score">' +
             formatPct(score.pct) + '% score</span>');
         }
+        var grade = getAuditGrade(score);
+        if (grade.grade !== "—") {
+          tags.push('<span class="grade-pill grade-pill-' + grade.tone + '">' +
+            escapeHtml(grade.label) + '</span>');
+        }
 
         return '<article class="audit-card">' +
             '<div class="audit-card-main">' +
-              '<h3 class="audit-title">' + escapeHtml(a.title) + '</h3>' +
+              '<h3 class="audit-title">' +
+                (a.isLocked ? '🔒 ' : '') + escapeHtml(a.title) +
+              '</h3>' +
               '<p class="audit-sub">' +
                 (sub ? escapeHtml(sub) : "No supplier or factory set") +
               '</p>' +
@@ -5377,6 +7200,10 @@
             '<div class="audit-card-actions">' +
               '<button type="button" class="btn btn-secondary btn-sm" data-open="' +
                 escapeHtml(a.id) + '">Open</button>' +
+              '<button type="button" class="btn btn-ghost btn-sm" data-export-pkg="' +
+                escapeHtml(a.id) + '">Export package</button>' +
+              '<button type="button" class="btn btn-ghost btn-sm" data-re-audit="' +
+                escapeHtml(a.id) + '">+ Re-audit</button>' +
               '<button type="button" class="btn btn-ghost btn-sm" data-summary="' +
                 escapeHtml(a.id) + '">Summary</button>' +
               '<button type="button" class="btn btn-ghost btn-sm" data-edit="' +
@@ -5487,7 +7314,7 @@
       // audit (session/summary/report/editor/actions/practices) it is hidden so
       // the content gets the full width.
       var SIDEBAR_SCREENS = {
-        dashboard: true, home: true, templates: true, manual: true
+        dashboard: true, home: true, analytics: true, templates: true, manual: true
       };
       var SIDEBAR_KEY = "auditpro.sidebar";
 
@@ -5567,6 +7394,7 @@
       function goToScreen(key) {
         if (key === "dashboard") { openDashboard(); }
         else if (key === "home") { showHome(); }
+        else if (key === "analytics") { openAnalytics(); }
         else if (key === "templates") { openTemplates(); }
         else if (key === "manual") { openManual(); }
       }
@@ -5605,6 +7433,7 @@
         templatesView.hidden = true;
         manualView.hidden = true;
         dashboardView.hidden = false;
+        if (window.analyticsView) { analyticsView.hidden = true; }
         btnBackHome.hidden = true;
         saveStatusEl.hidden = true;
 
@@ -6068,6 +7897,7 @@
         templatesView.hidden = true;
         dashboardView.hidden = true;
         manualView.hidden = false;
+        if (window.analyticsView) { analyticsView.hidden = true; }
         btnBackHome.hidden = true;
         saveStatusEl.hidden = true;
 
@@ -6105,6 +7935,8 @@
 
       function openAudit(id) {
         var audit = findAudit(id);
+        if (audit && audit.timerRunning && !audit.isLocked) { startTimerInterval(audit); }
+        updateTimerUI(audit);
         if (!audit) { return; }
 
         state.activeAuditId = id;
@@ -6136,6 +7968,7 @@
         updateShell();
         document.body.classList.remove("print-report");
         homeView.hidden = true;
+        if (window.analyticsView) { analyticsView.hidden = true; }
         summaryView.hidden = true;
         editorView.hidden = true;
         actionsView.hidden = true;
@@ -6194,20 +8027,103 @@
         var openIdx = openId ? findQuestionIndex(openId) : -1;
         if (openIdx >= 0) { currentIndex = openIdx; }
 
+        var audit = getActiveAudit();
+        if (!audit) { return; }
+
+        if (audit.isLocked) {
+          document.body.classList.add("is-audit-locked");
+        } else {
+          document.body.classList.remove("is-audit-locked");
+        }
+
+        var filterQuery = (sessionSearchQuery || "").trim().toLowerCase();
+        var filterMode = sessionFilterMode || "all";
+
+        // GLOBAL MULTI-SECTION SEARCH MODE
+        if (filterQuery) {
+          var matchedSections = [];
+          var totalMatches = 0;
+
+          CHECKLIST.sections.forEach(function (s) {
+            var mTests = (s.tests || []).filter(function (t) {
+              var ans = audit.answers[t.id];
+              var textMatch = (t.text || "").toLowerCase().indexOf(filterQuery) >= 0;
+              var numMatch = String(t.numberInSection || "").indexOf(filterQuery) >= 0;
+              var commentMatch = ans && ans.comment && ans.comment.toLowerCase().indexOf(filterQuery) >= 0;
+              return textMatch || numMatch || commentMatch;
+            });
+            if (mTests.length > 0) {
+              totalMatches += mTests.length;
+              matchedSections.push({ section: s, tests: mTests });
+            }
+          });
+
+          var groupsHtml = matchedSections.length
+            ? matchedSections.map(function (grp) {
+                return '<div class="search-sec-group">' +
+                  '<h3 class="search-sec-title">' +
+                    '<span>Section ' + (grp.section.number || "") + ' — ' + escapeHtml(grp.section.name) + '</span>' +
+                    '<span class="chip">' + grp.tests.length + ' match' + (grp.tests.length === 1 ? '' : 'es') + '</span>' +
+                  '</h3>' +
+                  '<ol class="q-list">' +
+                    grp.tests.map(function (t, i) {
+                      return questionCardHtml(t, i, audit);
+                    }).join("") +
+                  '</ol>' +
+                '</div>';
+              }).join("")
+            : '<li class="editor-empty" style="padding:28px; text-align:center;">No questions match “' + escapeHtml(filterQuery) + '” across any section of this checklist.</li>';
+
+          card.innerHTML =
+            (audit.isLocked ? '<div class="lock-banner"><span>🔒 This audit is finalized and locked. Answers cannot be modified.</span><button type="button" class="btn btn-secondary btn-sm" id="btnLockGoSum">View Summary</button></div>' : '') +
+            '<div class="q-list-head">' +
+              '<p class="eyebrow">Global Search Results</p>' +
+              '<h1 class="q-section-title">Searching All Sections</h1>' +
+              '<p class="page-sub">Found <strong>' + totalMatches + '</strong> matching question' + (totalMatches === 1 ? '' : 's') + ' across ' + matchedSections.length + ' sections for “' + escapeHtml(filterQuery) + '”.</p>' +
+            '</div>' +
+            groupsHtml;
+
+          applyExpanded();
+          updateProgress();
+          return;
+        }
+
+        var filteredTests = tests.filter(function (t) {
+          var ans = audit.answers[t.id];
+          var opt = ans && ans.option ? optionFor(t, ans.option) : null;
+          var isAnswered = ans && !!ans.option;
+          var isFail = opt && opt.score === 0;
+          var isCrit = (t.severity === "critical" || t.severity === "major");
+          var hasNotes = ans && ((ans.comment && ans.comment.trim()) || (ans.photos && ans.photos.length));
+
+          if (filterMode === "unanswered" && isAnswered) { return false; }
+          if (filterMode === "failed" && !isFail) { return false; }
+          if (filterMode === "critical" && !isCrit) { return false; }
+          if (filterMode === "flagged" && !hasNotes) { return false; }
+
+          if (filterQuery) {
+            var textMatch = (t.text || "").toLowerCase().indexOf(filterQuery) >= 0;
+            var numMatch = String(t.numberInSection || "").indexOf(filterQuery) >= 0;
+            var commentMatch = ans && ans.comment && ans.comment.toLowerCase().indexOf(filterQuery) >= 0;
+            if (!textMatch && !numMatch && !commentMatch) { return false; }
+          }
+          return true;
+        });
+
+        var listBody = filteredTests.length
+          ? filteredTests.map(function (t, i) {
+              return questionCardHtml(t, i, audit);
+            }).join("")
+          : '<li class="editor-empty" style="padding:24px; text-align:center;">No questions match the current search or filter in this section.</li>';
+
         card.innerHTML =
           '<div class="q-list-head">' +
             '<p class="eyebrow">Section ' + (sec.number || "") + '</p>' +
             '<h1 class="q-section-title">' + escapeHtml(sec.name) + '</h1>' +
-            '<p class="page-sub">' + tests.length +
-              (tests.length === 1 ? " question" : " questions") +
-              ' in this section. Tap a question to answer it — its comment and ' +
-              'photos open once you choose an answer.</p>' +
+            '<p class="page-sub">Showing ' + filteredTests.length + ' of ' + tests.length +
+              ' questions in this section. Tap a question to answer it.</p>' +
           '</div>' +
-          '<ol class="q-list">' +
-            tests.map(function (t, i) {
-              return questionCardHtml(t, i, audit);
-            }).join("") +
-          '</ol>';
+          '<ol class="q-list">' + listBody + '</ol>';
 
         applyExpanded();
         updateProgress();
@@ -6253,11 +8169,17 @@
         var answered = !!ans.option;
         var inputId = "qc-c-" + t.id;
 
+        var sev = t.severity || "minor";
+        var sevTag = sev === "critical"
+          ? '<span class="sev-tag sev-critical" title="Zero Tolerance / Knockout question">Critical</span>'
+          : (sev === "major" ? '<span class="sev-tag sev-major">Major</span>' : '');
+
         return '<li class="q-card' + (answered ? " is-answered" : "") +
             '" id="qc-' + escapeHtml(t.id) + '" data-qid="' + escapeHtml(t.id) + '">' +
           '<button type="button" class="q-card-head" data-toggle-q="' +
             escapeHtml(t.id) + '" aria-expanded="false">' +
             '<span class="q-num">' + (i + 1) + '</span>' +
+            sevTag +
             '<span class="q-text">' + escapeHtml(t.text) + '</span>' +
             '<span class="q-status">' + cardStatusHtml(t, ans) + '</span>' +
             '<span class="q-caret" aria-hidden="true">▾</span>' +
@@ -6272,15 +8194,34 @@
             '<p class="q-reveal-hint">Select an answer to add a comment or photo.</p>' +
             '<div class="q-detail">' +
               '<div class="field comment-field">' +
-                '<label for="' + escapeHtml(inputId) + '">Comment ' +
-                  '<span class="optional">(optional)</span></label>' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                  '<label for="' + escapeHtml(inputId) + '">Comment <span class="optional">(optional)</span></label>' +
+                  (window.webkitSpeechRecognition || window.SpeechRecognition ? '<button type="button" class="voice-btn hide-when-locked" data-voice-target="' + escapeHtml(inputId) + '" title="Speak comment (Hands-free voice dictation)">🎙️</button>' : '') +
+                '</div>' +
                 '<textarea id="' + escapeHtml(inputId) + '" data-comment-q="' +
                   escapeHtml(t.id) + '" rows="3" ' +
+                  (audit.isLocked ? 'readonly ' : '') +
                   'placeholder="Evidence, observation, or follow-up...">' +
                   escapeHtml(ans.comment || "") + '</textarea>' +
                 '<p class="clear-row"><button type="button" class="linkbtn" ' +
                   'data-clear-q="' + escapeHtml(t.id) + '">Clear answer</button></p>' +
               '</div>' +
+              (function () {
+                var opt = ans.option ? optionFor(t, ans.option) : null;
+                var isFail = opt && opt.score === 0;
+                if (!isFail) { return ''; }
+                var linkedAction = findActionForTest(audit, t.id);
+                if (linkedAction) {
+                  return '<div class="q-cap-linked">' +
+                    '<span class="cap-tag">CAP linked: ' + escapeHtml(linkedAction.status) + ' (' + escapeHtml(linkedAction.priority) + ')</span>' +
+                    '<button type="button" class="btn btn-ghost btn-sm" data-edit-action="' + escapeHtml(linkedAction.id) + '">View / Edit CAP</button>' +
+                  '</div>';
+                }
+                return '<div class="q-cap-prompt">' +
+                  '<span>' + (t.severity === "critical" ? '⚠️ Zero Tolerance failure! Automatically fails audit.' : 'Non-conformance recorded.') + '</span>' +
+                  '<button type="button" class="btn btn-sm btn-danger" data-fast-cap="' + escapeHtml(t.id) + '">+ Raise Action Item (CAP)</button>' +
+                '</div>';
+              })() +
               '<div class="photo-block">' +
                 '<h4>Evidence photos</h4>' +
                 photoGridHtml("question", t.id, ans.photos, "No photos yet.") +
@@ -6629,6 +8570,7 @@
         updateShell();
         document.body.classList.remove("print-report");
         homeView.hidden = true;
+        if (window.analyticsView) { analyticsView.hidden = true; }
         sessionView.hidden = true;
         editorView.hidden = true;
         actionsView.hidden = true;
@@ -6743,6 +8685,59 @@
         '</tr>';
 
         sumSections.innerHTML = rows + '<tfoot>' + totalRow + '</tfoot>';
+
+        // 1. Grade Hero
+        var grade = getAuditGrade(score);
+        var heroHtml = '<div class="grade-hero-left">' +
+            '<span class="grade-letter-badge grade-badge-' + grade.tone + '">' +
+              escapeHtml(grade.grade) +
+            '</span>' +
+            '<div class="grade-hero-info">' +
+              '<h3>' + escapeHtml(grade.label) + ' (' + (score.pct === null ? "—" : formatPct(score.pct) + "%") + ')</h3>' +
+              '<p>' + escapeHtml(grade.sublabel) + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="grade-hero-right">' +
+            '<span class="pill pill-' + (score.hasKnockout ? 'fail' : (score.pct >= 70 ? 'pass' : 'fail')) + '">' +
+              (score.hasKnockout ? 'CRITICAL FAILURE' : (score.pct >= 70 ? 'PASSED' : 'ACTION REQUIRED')) +
+            '</span>' +
+          '</div>';
+
+        if (score.hasKnockout) {
+          heroHtml += '<div class="knockout-banner" style="width:100%; box-sizing:border-box;">' +
+            '<span class="knockout-icon" aria-hidden="true">🚨</span>' +
+            '<div>' +
+              '<strong>Critical Zero-Tolerance Violation Detected!</strong>' +
+              '<span>This factory failed ' + score.counts.criticalFails + ' mandatory zero-tolerance test(s). Under international sourcing standards, failure of any critical safety or legality test triggers an immediate overall audit rejection regardless of score percentage.</span>' +
+            '</div>' +
+          '</div>';
+        }
+        // Target comparison badge
+        heroHtml += renderTargetComparisonHtml(audit, score);
+        sumGradeHero.innerHTML = heroHtml;
+
+        // 2. Department Scorecard
+        sumDeptScorecard.innerHTML = renderDeptScorecardHtml(audit, activeSections());
+
+        // 3. Digital Sign-off Section
+        // Re-Audit Delta Banner
+        var reAuditBanner = renderReAuditBannerHtml(audit);
+
+        var lockCtrlHtml = '<div style="margin:16px 0; display:flex; justify-content:space-between; align-items:center; background:#FFF; border:1px solid #D8E0E3; border-radius:8px; padding:12px 18px;">' +
+          '<div>' +
+            '<span class="pill ' + (audit.isLocked ? 'pill-locked' : 'pill-open') + '">' +
+              (audit.isLocked ? '🔒 Finalized & Locked (Official Record)' : 'Draft (Editable)') +
+            '</span>' +
+            '<p style="margin:4px 0 0 0; font-size:12px; color:#4A5A66;">' +
+              (audit.isLocked ? 'Findings and signatures are frozen against modifications.' : 'Lock when exit meeting signatures are completed.') +
+            '</p>' +
+          '</div>' +
+          '<button type="button" class="btn ' + (audit.isLocked ? 'btn-ghost' : 'btn-secondary') + ' btn-sm" id="' + (audit.isLocked ? 'btnUnlockAudit' : 'btnLockAudit') + '">' +
+            (audit.isLocked ? 'Unlock for correction' : '🔒 Finalize & lock audit') +
+          '</button>' +
+        '</div>';
+
+        sumSignoffSection.innerHTML = reAuditBanner + renderSignoffSectionHtml(audit) + lockCtrlHtml;
       }
 
       // =========================================================
@@ -6759,6 +8754,7 @@
         screen = "report";
         updateShell();
         homeView.hidden = true;
+        if (window.analyticsView) { analyticsView.hidden = true; }
         sessionView.hidden = true;
         summaryView.hidden = true;
         editorView.hidden = true;
@@ -6801,7 +8797,12 @@
         var imgs = (ids || []).map(function (id) {
           var p = photoCache[id];
           if (!p) { return ""; }
-          return '<img src="' + p.dataUrl + '" alt="Audit photo" />';
+          var dateStr = p.createdAt ? formatDate(p.createdAt) : "";
+          return '<div class="report-photo-block" style="display:inline-block; margin:6px; vertical-align:top; max-width:200px;">' +
+            '<img src="' + p.dataUrl + '" alt="Audit photo" style="border-radius:4px; max-width:190px; max-height:140px; object-fit:cover; display:block;" />' +
+            (p.caption ? '<div style="font-size:11px; color:#1B2A33; font-style:italic; margin-top:3px;">' + escapeHtml(p.caption) + '</div>' : '') +
+            (dateStr ? '<div style="font-size:10px; color:#6B7280;">' + escapeHtml(dateStr) + '</div>' : '') +
+          '</div>';
         }).join("");
         return imgs ? '<div class="report-photos">' + imgs + '</div>' : "";
       }
@@ -6822,7 +8823,9 @@
           ["Auditor", audit.auditor],
           ["Audit date", audit.date ? formatDate(audit.date) : ""],
           ["Product type", audit.productType],
-          ["Workers", audit.workers]
+          ["Workers", audit.workers],
+          ["Inspection Duration", audit.timerSeconds ? formatTimerDuration(audit.timerSeconds) : ""],
+          ["Factory Geolocation", audit.geolocation ? (audit.geolocation.lat.toFixed(5) + "° N, " + audit.geolocation.lng.toFixed(5) + "° E (±" + Math.round(audit.geolocation.accuracy || 0) + "m)" + (audit.geolocation.timestamp ? " · " + formatDate(audit.geolocation.timestamp) : "")) : ""]
         ].filter(function (r) { return r[1]; });
 
         var metaHtml = metaRows.map(function (r) {
@@ -6833,13 +8836,30 @@
         var html = '';
 
         // Cover
-        html += '<div class="report-cover">' +
+        var grade = getAuditGrade(score);
+        var gradeCoverBanner = '<div class="grade-hero" style="margin-top:16px;">' +
+          '<div class="grade-hero-left">' +
+            '<span class="grade-letter-badge grade-badge-' + grade.tone + '">' + escapeHtml(grade.grade) + '</span>' +
+            '<div class="grade-hero-info">' +
+              '<h3>' + escapeHtml(grade.label) + ' (' + (score.pct === null ? "—" : formatPct(score.pct) + "%") + ')</h3>' +
+              '<p>' + escapeHtml(grade.sublabel) + '</p>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+        var watermarkText = getReportWatermarkText(audit, score);
+        html += '<div class="report-watermark-overlay' + (watermarkText ? ' report-watermark-visible' : '') + '" id="reportWatermarkOverlay">' + escapeHtml(watermarkText) + '</div>' +
+          '<div class="report-cover">' +
           '<div class="report-brand">Audit Pro · Factory audit report</div>' +
           '<h1>' + escapeHtml(audit.title) + '</h1>' +
           '<p class="sub">' + escapeHtml(ACTIVE_TEMPLATE ? ACTIVE_TEMPLATE.name : "") +
             (ACTIVE_TEMPLATE && ACTIVE_TEMPLATE.reference
               ? ' · ' + escapeHtml(ACTIVE_TEMPLATE.reference) : "") + '</p>' +
           (metaHtml ? '<div class="report-meta">' + metaHtml + '</div>' : '') +
+          gradeCoverBanner +
+          renderTargetComparisonHtml(audit, score) +
+          renderReAuditBannerHtml(audit) +
+          (audit.isLocked ? '<div style="margin-top:10px;"><span class="pill pill-locked">🔒 Official Finalized & Signed Record (Locked)</span></div>' : '') +
         '</div>';
 
         // Global result
@@ -6860,6 +8880,9 @@
           '<div><strong>' + c.na + '</strong><span>N/A</span></div>' +
           '<div><strong>' + c.unanswered + '</strong><span>Unanswered</span></div>' +
         '</div>';
+
+        // Department Scorecard
+        html += renderDeptScorecardHtml(audit, sections);
 
         // Section results table
         html += '<h2 class="report-h2">Section results</h2>' +
@@ -6971,13 +8994,19 @@
 
         // General comments
         var comments = audit.reportComments || "";
-        html += '<h2 class="report-h2">General comments</h2>' +
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:24px;margin-bottom:12px;">' +
+          '<h2 class="report-h2" style="margin:0;">General comments & Executive Summary</h2>' +
+          '<button type="button" class="btn btn-secondary btn-sm no-print" id="btnAutoNarrative">⚡ Auto-Generate Narrative</button>' +
+        '</div>' +
           '<textarea id="reportComments" class="no-print report-comments-input" rows="4" ' +
             'placeholder="Overall observations, context, or follow-up notes...">' +
             escapeHtml(comments) + '</textarea>' +
           '<div class="report-comments-print"><p>' +
             (comments.trim() ? escapeHtml(comments) : "No general comments.") +
           '</p></div>';
+
+        // Formal Sign-off Section with Signatures
+        html += renderReportSignoffHtml(audit);
 
         // Footer
         html += '<div class="report-foot">Prepared with Audit Pro · Generated ' +
@@ -7449,6 +9478,7 @@
         screen = "editor";
         updateShell();
         homeView.hidden = true;
+        if (window.analyticsView) { analyticsView.hidden = true; }
         sessionView.hidden = true;
         summaryView.hidden = true;
         actionsView.hidden = true;
@@ -7573,9 +9603,17 @@
                       (i === lastTest ? " disabled" : "") + '>\u2193</button>' +
                   '</span>';
 
+                var sevChip = "";
+                if (x.severity === "critical") {
+                  sevChip = '<span class="chip chip-critical" title="Zero Tolerance / Knockout question">Critical</span>';
+                } else if (x.severity === "major") {
+                  sevChip = '<span class="chip chip-major">Major</span>';
+                }
+
                 return '<li class="editor-test' + (x.disabled ? " is-disabled" : "") + '">' +
                   '<span class="num">' + (i + 1) + '</span>' +
                   '<span class="editor-test-text">' + escapeHtml(x.text) + '</span>' +
+                  sevChip +
                   (x.disabled ? '<span class="chip">Disabled</span>' : '') +
                   '<span class="chip">' +
                     escapeHtml(ANSWER_TYPE_LABELS[x.answerType] || x.answerType) +
@@ -7687,6 +9725,9 @@
 
         populateTypeSelect(tType, t ? t.answerType : TEMPLATE.defaultAnswerType);
         tText.value = t ? t.text : "";
+        if (tSeverity) {
+          tSeverity.value = t && t.severity ? t.severity : "minor";
+        }
 
         testModalTitle.textContent = t ? "Edit question" : "Add question";
         testFormError.hidden = true;
@@ -7745,6 +9786,7 @@
           if (entry) {
             entry.test.text = text;
             entry.test.answerType = answerType;
+            entry.test.severity = tSeverity ? tSeverity.value : "minor";
             if (entry.section.id !== sectionId) {
               entry.section.tests = entry.section.tests.filter(function (x) {
                 return x.id !== testEditingId;
@@ -7757,6 +9799,7 @@
             id: makeId("test"),
             text: text,
             answerType: answerType,
+            severity: tSeverity ? tSeverity.value : "minor",
             custom: true,
             disabled: false
           });
@@ -8187,6 +10230,7 @@
         screen = "actions";
         updateShell();
         homeView.hidden = true;
+        if (window.analyticsView) { analyticsView.hidden = true; }
         sessionView.hidden = true;
         summaryView.hidden = true;
         editorView.hidden = true;
@@ -8440,6 +10484,7 @@
         screen = "practices";
         updateShell();
         homeView.hidden = true;
+        if (window.analyticsView) { analyticsView.hidden = true; }
         sessionView.hidden = true;
         summaryView.hidden = true;
         editorView.hidden = true;
@@ -8617,6 +10662,784 @@
           : (state.templates[0] ? state.templates[0].id : "");
       }
 
+      
+      /* ===========================================================
+         Stage 16: Theme Engine, Device GPS, Report Logo & Supplier Trends
+         =========================================================== */
+      var currentTheme = localStorage.getItem("auditpro.theme") || "light";
+
+      function applyTheme(theme) {
+        currentTheme = theme;
+        var btn = document.getElementById("btnThemeToggle");
+        var icon = document.getElementById("themeIcon");
+        var label = document.getElementById("themeLabel");
+        if (theme === "dark") {
+          document.documentElement.setAttribute("data-theme", "dark");
+          if (icon) { icon.textContent = "☀️"; }
+          if (label) { label.textContent = "Light"; }
+          if (btn) { btn.setAttribute("title", "Switch to Light Mode"); }
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+          if (icon) { icon.textContent = "🌙"; }
+          if (label) { label.textContent = "Dark"; }
+          if (btn) { btn.setAttribute("title", "Switch to Dark Mode"); }
+        }
+        try { localStorage.setItem("auditpro.theme", theme); } catch (e) {}
+      }
+
+      function toggleTheme() {
+        applyTheme(currentTheme === "dark" ? "light" : "dark");
+      }
+
+      var modalGeolocation = null;
+      var modalLogoDataUrl = "";
+
+      function updateModalGpsDisplay() {
+        var input = document.getElementById("fGpsCoords");
+        var btnClear = document.getElementById("btnClearGps");
+        var btnAcquire = document.getElementById("btnAcquireGps");
+        if (!input) return;
+        if (modalGeolocation && typeof modalGeolocation.lat === "number") {
+          input.value = modalGeolocation.lat.toFixed(5) + "° N, " + modalGeolocation.lng.toFixed(5) + "° E (±" + Math.round(modalGeolocation.accuracy || 0) + "m)";
+          if (btnClear) btnClear.hidden = false;
+          if (btnAcquire) btnAcquire.textContent = "📍 Re-acquire GPS";
+        } else {
+          input.value = "";
+          if (btnClear) btnClear.hidden = true;
+          if (btnAcquire) btnAcquire.textContent = "📍 Acquire GPS";
+        }
+      }
+
+      function updateModalLogoDisplay() {
+        var box = document.getElementById("fLogoPreviewBox");
+        var img = document.getElementById("fLogoPreviewImg");
+        var btnRemove = document.getElementById("btnRemoveLogo");
+        if (!box || !img) return;
+        if (modalLogoDataUrl) {
+          img.src = modalLogoDataUrl;
+          box.style.display = "block";
+          if (btnRemove) btnRemove.hidden = false;
+        } else {
+          img.src = "";
+          box.style.display = "none";
+          if (btnRemove) btnRemove.hidden = true;
+        }
+      }
+
+      function acquireDeviceGps() {
+        if (!navigator.geolocation) {
+          alert("Geolocation is not supported by your browser environment.");
+          return;
+        }
+        var btnAcquire = document.getElementById("btnAcquireGps");
+        if (btnAcquire) {
+          btnAcquire.disabled = true;
+          btnAcquire.textContent = "📍 Acquiring GPS...";
+        }
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          modalGeolocation = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            accuracy: pos.coords.accuracy,
+            timestamp: new Date().toISOString()
+          };
+          updateModalGpsDisplay();
+          if (btnAcquire) {
+            btnAcquire.disabled = false;
+            btnAcquire.textContent = "📍 Re-acquire GPS";
+          }
+          showToast("GPS coordinates acquired.");
+        }, function (err) {
+          alert("Could not acquire device GPS coordinates: " + err.message);
+          if (btnAcquire) {
+            btnAcquire.disabled = false;
+            btnAcquire.textContent = "📍 Acquire GPS";
+          }
+        }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+      }
+
+      function handleLogoFileSelect(file) {
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var img = new Image();
+          img.onload = function () {
+            var maxW = 400;
+            var maxH = 160;
+            var w = img.width;
+            var h = img.height;
+            if (w > maxW || h > maxH) {
+              var scale = Math.min(maxW / w, maxH / h);
+              w = Math.round(w * scale);
+              h = Math.round(h * scale);
+            }
+            var cvs = document.createElement("canvas");
+            cvs.width = w;
+            cvs.height = h;
+            var ctx = cvs.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            modalLogoDataUrl = cvs.toDataURL("image/png");
+            updateModalLogoDisplay();
+            showToast("Logo loaded.");
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      
+      /* ===========================================================
+         Stage 17: Walkthrough Timer, PDF Watermark & Demo Suite
+         =========================================================== */
+      var activeTimerInterval = null;
+      var activeWatermarkSetting = "auto";
+
+      function formatTimerHMS(totalSec) {
+        var s = Math.max(0, Math.floor(totalSec || 0));
+        var hrs = Math.floor(s / 3600);
+        var rem = s % 3600;
+        var mins = Math.floor(rem / 60);
+        var secs = rem % 60;
+        function pad(n) { return (n < 10 ? "0" : "") + n; }
+        return pad(hrs) + ":" + pad(mins) + ":" + pad(secs);
+      }
+
+      function formatTimerDuration(totalSec) {
+        var s = Math.max(0, Math.floor(totalSec || 0));
+        var hrs = Math.floor(s / 3600);
+        var mins = Math.floor((s % 3600) / 60);
+        if (hrs > 0) {
+          return hrs + " hr " + mins + " min";
+        }
+        return mins + " min";
+      }
+
+      function updateTimerUI(audit) {
+        var display = document.getElementById("timerDisplay");
+        var btnToggle = document.getElementById("btnTimerToggle");
+        var btnReset = document.getElementById("btnTimerReset");
+        if (!display) return;
+
+        if (!audit) {
+          display.textContent = "00:00:00";
+          if (btnToggle) { btnToggle.textContent = "▶ Start"; btnToggle.disabled = true; }
+          if (btnReset) { btnReset.hidden = true; }
+          return;
+        }
+
+        display.textContent = formatTimerHMS(audit.timerSeconds || 0);
+
+        if (audit.isLocked) {
+          if (btnToggle) { btnToggle.textContent = "🔒 Frozen"; btnToggle.disabled = true; }
+          if (btnReset) { btnReset.hidden = true; }
+          return;
+        }
+
+        if (btnToggle) {
+          btnToggle.disabled = false;
+          btnToggle.textContent = audit.timerRunning ? "⏸ Pause" : (audit.timerSeconds > 0 ? "▶ Resume" : "▶ Start");
+        }
+        if (btnReset) {
+          btnReset.hidden = (audit.timerSeconds || 0) === 0;
+        }
+      }
+
+      function startTimerInterval(audit) {
+        if (activeTimerInterval) { clearInterval(activeTimerInterval); }
+        activeTimerInterval = setInterval(function () {
+          if (!audit || !audit.timerRunning || audit.isLocked) {
+            clearInterval(activeTimerInterval);
+            activeTimerInterval = null;
+            return;
+          }
+          audit.timerSeconds = (audit.timerSeconds || 0) + 1;
+          var disp = document.getElementById("timerDisplay");
+          if (disp) { disp.textContent = formatTimerHMS(audit.timerSeconds); }
+          // periodic save every 30s
+          if (audit.timerSeconds % 30 === 0) { saveState(); }
+        }, 1000);
+      }
+
+      function toggleWalkthroughTimer() {
+        var audit = getActiveAudit();
+        if (!audit || audit.isLocked) return;
+
+        if (audit.timerRunning) {
+          // Pause
+          audit.timerRunning = false;
+          audit.timerEndedAt = nowISO();
+          if (activeTimerInterval) { clearInterval(activeTimerInterval); activeTimerInterval = null; }
+          saveState();
+          updateTimerUI(audit);
+          showToast("Timer paused.");
+        } else {
+          // Start / Resume
+          if (!audit.timerStartedAt) { audit.timerStartedAt = nowISO(); }
+          audit.timerRunning = true;
+          saveState();
+          startTimerInterval(audit);
+          updateTimerUI(audit);
+          showToast("Walkthrough timer started.");
+        }
+      }
+
+      function resetWalkthroughTimer() {
+        var audit = getActiveAudit();
+        if (!audit || audit.isLocked) return;
+        if (!confirm("Reset walkthrough timer back to 00:00:00?")) return;
+        audit.timerRunning = false;
+        audit.timerSeconds = 0;
+        audit.timerStartedAt = null;
+        audit.timerEndedAt = null;
+        if (activeTimerInterval) { clearInterval(activeTimerInterval); activeTimerInterval = null; }
+        saveState();
+        updateTimerUI(audit);
+        showToast("Timer reset.");
+      }
+
+      function getReportWatermarkText(audit, score) {
+        if (activeWatermarkSetting === "none") return "";
+        if (activeWatermarkSetting !== "auto") return activeWatermarkSetting;
+
+        if (audit.isLocked) {
+          return "OFFICIAL INSPECTION REPORT";
+        }
+        if (score && score.knockoutFailed) {
+          return "FAILED · KNOCKOUT NON-COMPLIANCE";
+        }
+        return "DRAFT · NOT FINAL";
+      }
+
+      function generateExecutiveSummaryNarrative(audit, score) {
+        var g = getAuditGrade(score);
+        var target = audit.targetPassScore || 75;
+        var passed = score.pct !== null && score.pct >= target && !score.knockoutFailed;
+        var counts = score.counts;
+
+        var parts = [];
+        var dateStr = audit.date ? formatDate(audit.date) : "recent date";
+        parts.push("On " + dateStr + ", an on-site factory audit was conducted at " + (audit.factory || audit.supplier || "the facility") +
+          (audit.location ? " (" + audit.location + ")" : "") +
+          (audit.auditor ? " by lead auditor " + audit.auditor : "") +
+          (audit.representative ? " accompanied by factory representative " + audit.representative : "") + ".");
+
+        if (score.pct !== null) {
+          parts.push("The facility achieved an overall compliance score of " + formatPct(score.pct) + "% (" + g.grade + " — " + g.label + "), " +
+            (passed ? "clearing the required " + target + "% target mark by +" + formatPct(score.pct - target) + "%." : "falling short of the required " + target + "% target mark by " + formatPct(score.pct - target) + "%."));
+        }
+
+        if (score.knockoutFailed) {
+          parts.push("CRITICAL COMPLIANCE NOTICE: A zero-tolerance critical knockout checkpoint failed, resulting in an automatic overall Audit Rejection under international compliance standards.");
+        }
+
+        parts.push("Of the " + counts.enabled + " active compliance checkpoints evaluated, " +
+          counts.full + " passed fully (" + formatPct((counts.full / counts.enabled) * 100) + "%), " +
+          counts.zero + " non-conformances were recorded (" + formatPct((counts.zero / counts.enabled) * 100) + "%), and " +
+          (counts.na || 0) + " items were classified as Not Applicable.");
+
+        var totalCaps = (audit.actions || []).length;
+        if (totalCaps > 0) {
+          var openCaps = (audit.actions || []).filter(function (c) { return c.status !== "completed" && c.status !== "closed"; }).length;
+          parts.push("A Corrective Action Plan (CAP) was formally issued detailing " + totalCaps + " total action items (" + openCaps + " currently open pending factory root-cause verification and preventative remediation).");
+        } else {
+          parts.push("No urgent corrective action items were raised during this assessment.");
+        }
+
+        if (audit.timerSeconds && audit.timerSeconds > 0) {
+          parts.push("Total walkthrough duration on the production floor was " + formatTimerDuration(audit.timerSeconds) + ".");
+        }
+
+        if (audit.auditorSig && audit.repSig) {
+          parts.push("Both lead auditor and factory management have formally executed digital exit meeting sign-offs under ISO 19011 declaration protocols.");
+        }
+
+        return parts.join(" ");
+      }
+
+      function loadDemoAudits() {
+        if (!confirm("Load 3 realistic historical factory audits for 'Northwind Garments Unit 2'?\n\nThis will populate the Dashboard, Charts, Department Progression, and Supplier Trend Timeline.")) {
+          return;
+        }
+
+        var tpl = state.templates[0] || embeddedTemplate();
+        var tplId = tpl.id;
+        var allTests = [];
+        (tpl.sections || []).forEach(function (sec) {
+          (sec.tests || []).forEach(function (t) {
+            allTests.push({ testId: t.id, secId: sec.id, secName: sec.name, text: t.text, isKnockout: !!t.isKnockout });
+          });
+        });
+
+        var now = new Date();
+        function daysAgo(d) {
+          var dt = new Date(now.getTime() - d * 24 * 60 * 60 * 1000);
+          return dt.toISOString().slice(0, 10);
+        }
+
+        // Demo Audit 1: Baseline 90 days ago (Score ~64%, Knockout failed, 5 CAPs)
+        var a1Id = makeId("audit");
+        var answers1 = {};
+        allTests.forEach(function (t, i) {
+          // Fail ~25 questions, pass remainder
+          var isFail = (i % 6 === 0);
+          if (t.isKnockout && i < 30) isFail = true; // Trigger knockout on needle control
+          answers1[t.testId] = {
+            option: isFail ? "fail" : "pass",
+            comment: isFail ? "Non-conformance observed during factory walkthrough." : "",
+            photos: [],
+            updatedAt: daysAgo(90)
+          };
+        });
+
+        var demoAudit1 = normalizeAudit({
+          id: a1Id,
+          title: "Northwind Garments — Initial Factory Evaluation",
+          supplier: "Northwind Garments Ltd",
+          factory: "Unit 2 Spinning & Garments",
+          location: "Tirupur, Tamil Nadu, India",
+          representative: "K. Rajesh (General Manager)",
+          auditor: "M. Kutty (Lead Auditor)",
+          date: daysAgo(90),
+          productType: "Knitted Apparel & Terry Towels",
+          workers: "850",
+          templateId: tplId,
+          targetPassScore: 75,
+          isLocked: true,
+          isDemo: true,
+          timerSeconds: 7800,
+          geolocation: { lat: 11.10852, lng: 77.34115, accuracy: 6.5, timestamp: daysAgo(90) + "T10:30:00Z" },
+          answers: answers1,
+          actions: [
+            { id: makeId("action"), sectionId: allTests[0] ? allTests[0].secId : "", testId: allTests[0] ? allTests[0].testId : "", issue: "Broken Needle Control Log missing daily counters", rootCause: "Lack of supervisor verification at shift handover", corrective: "Implement counter signed logbook", preventive: "Weekly QA audits", owner: "P. Murugan (QA Head)", dueDate: daysAgo(60), priority: "high", status: "closed", issuePhotos: [], proofPhotos: [], createdAt: daysAgo(90) },
+            { id: makeId("action"), sectionId: allTests[1] ? allTests[1].secId : "", testId: allTests[1] ? allTests[1].testId : "", issue: "Raw material moisture meters out of calibration", rootCause: "Annual calibration expired", corrective: "Recalibrate via third-party lab", preventive: "Calibration register tracking", owner: "S. Anand (Lab Tech)", dueDate: daysAgo(60), priority: "high", status: "closed", issuePhotos: [], proofPhotos: [], createdAt: daysAgo(90) },
+            { id: makeId("action"), sectionId: allTests[2] ? allTests[2].secId : "", testId: allTests[2] ? allTests[2].testId : "", issue: "Emergency fire exit path obstructed in sewing line B", rootCause: "Excess fabric bundles temporarily placed in aisle", corrective: "Clear aisle immediately", preventive: "Demarcate yellow floor safety zones", owner: "A. Kumar (Safety Officer)", dueDate: daysAgo(75), priority: "high", status: "closed", issuePhotos: [], proofPhotos: [], createdAt: daysAgo(90) },
+            { id: makeId("action"), sectionId: allTests[3] ? allTests[3].secId : "", testId: allTests[3] ? allTests[3].testId : "", issue: "PPE eye guards missing on 4 button-attach machines", rootCause: "Guards removed during needle change and not replaced", corrective: "Re-attach eye guards", preventive: "Shift supervisor sign-off checklist", owner: "R. Suresh (Floor Supervisor)", dueDate: daysAgo(40), priority: "medium", status: "in_progress", issuePhotos: [], proofPhotos: [], createdAt: daysAgo(90) },
+            { id: makeId("action"), sectionId: allTests[4] ? allTests[4].secId : "", testId: allTests[4] ? allTests[4].testId : "", issue: "Yarn lot inspection records missing supplier COA", rootCause: "Vendor delay in transmitting certificates", corrective: "Obtain missing certificates from mill", preventive: "Strict gate-inward COA requirement", owner: "K. Mohan (Procurement)", dueDate: daysAgo(30), priority: "medium", status: "open", issuePhotos: [], proofPhotos: [], createdAt: daysAgo(90) }
+          ],
+          reportComments: "Initial factory evaluation conducted under ISO 19011. Critical failure identified in Broken Needle Control. Corrective actions issued with 30-day target resolution."
+        }, tplId);
+
+        // Demo Audit 2: Follow-up Re-audit 45 days ago (Score ~78.5%, Grade B, Knockout cleared)
+        var a2Id = makeId("audit");
+        var answers2 = {};
+        allTests.forEach(function (t, i) {
+          var isFail = (i % 8 === 0); // Fewer failures
+          answers2[t.testId] = {
+            option: isFail ? "fail" : "pass",
+            comment: isFail ? "Minor observation noted." : "",
+            photos: [],
+            updatedAt: daysAgo(45)
+          };
+        });
+
+        var demoAudit2 = normalizeAudit({
+          id: a2Id,
+          title: "Northwind Garments — CAP Follow-up Verification",
+          supplier: "Northwind Garments Ltd",
+          factory: "Unit 2 Spinning & Garments",
+          location: "Tirupur, Tamil Nadu, India",
+          representative: "K. Rajesh (General Manager)",
+          auditor: "M. Kutty (Lead Auditor)",
+          date: daysAgo(45),
+          productType: "Knitted Apparel & Terry Towels",
+          workers: "850",
+          templateId: tplId,
+          targetPassScore: 75,
+          isLocked: true,
+          isDemo: true,
+          previousAuditId: a1Id,
+          timerSeconds: 5400,
+          geolocation: { lat: 11.10852, lng: 77.34115, accuracy: 5.8, timestamp: daysAgo(45) + "T11:00:00Z" },
+          answers: answers2,
+          actions: [
+            { id: makeId("action"), sectionId: allTests[3] ? allTests[3].secId : "", testId: allTests[3] ? allTests[3].testId : "", issue: "PPE eye guards missing on 4 button-attach machines", rootCause: "Guards removed during needle change and not replaced", corrective: "Re-attach eye guards", preventive: "Shift supervisor sign-off checklist", owner: "R. Suresh (Floor Supervisor)", dueDate: daysAgo(20), priority: "medium", status: "closed", issuePhotos: [], proofPhotos: [], createdAt: daysAgo(90) },
+            { id: makeId("action"), sectionId: allTests[4] ? allTests[4].secId : "", testId: allTests[4] ? allTests[4].testId : "", issue: "Yarn lot inspection records missing supplier COA", rootCause: "Vendor delay in transmitting certificates", corrective: "Obtain missing certificates from mill", preventive: "Strict gate-inward COA requirement", owner: "K. Mohan (Procurement)", dueDate: daysAgo(10), priority: "medium", status: "in_progress", issuePhotos: [], proofPhotos: [], createdAt: daysAgo(90) }
+          ],
+          reportComments: "Follow-up verification audit. Needle control log verification and critical checkpoints confirmed cleared. Significant score recovery."
+        }, tplId);
+
+        // Demo Audit 3: Annual Recertification 7 days ago (Score ~89.2%, Grade A, All CAPs closed)
+        var a3Id = makeId("audit");
+        var answers3 = {};
+        allTests.forEach(function (t, i) {
+          var isFail = (i % 18 === 0); // Very few failures
+          answers3[t.testId] = {
+            option: isFail ? "fail" : "pass",
+            comment: isFail ? "Minor housekeeping item." : "",
+            photos: [],
+            updatedAt: daysAgo(7)
+          };
+        });
+
+        var demoAudit3 = normalizeAudit({
+          id: a3Id,
+          title: "Northwind Garments — Annual Recertification Audit",
+          supplier: "Northwind Garments Ltd",
+          factory: "Unit 2 Spinning & Garments",
+          location: "Tirupur, Tamil Nadu, India",
+          representative: "K. Rajesh (General Manager)",
+          auditor: "M. Kutty (Lead Auditor)",
+          date: daysAgo(7),
+          productType: "Knitted Apparel & Terry Towels",
+          workers: "850",
+          templateId: tplId,
+          targetPassScore: 75,
+          isLocked: true,
+          isDemo: true,
+          previousAuditId: a2Id,
+          timerSeconds: 9000,
+          geolocation: { lat: 11.10852, lng: 77.34115, accuracy: 4.8, timestamp: daysAgo(7) + "T09:45:00Z" },
+          auditorSig: { dataUrl: "demo", name: "M. Kutty", date: daysAgo(7) },
+          repSig: { dataUrl: "demo", name: "K. Rajesh", date: daysAgo(7) },
+          answers: answers3,
+          actions: [
+            { id: makeId("action"), sectionId: allTests[4] ? allTests[4].secId : "", testId: allTests[4] ? allTests[4].testId : "", issue: "Yarn lot inspection records missing supplier COA", rootCause: "Vendor delay in transmitting certificates", corrective: "All COAs retrieved and archived", preventive: "Digital COA portal enabled", owner: "K. Mohan (Procurement)", dueDate: daysAgo(5), priority: "medium", status: "closed", issuePhotos: [], proofPhotos: [], createdAt: daysAgo(90) }
+          ],
+          reportComments: "Annual recertification audit completed. Excellent compliance standards observed across all 17 departments. Digital sign-off executed."
+        }, tplId);
+
+        state.audits.unshift(demoAudit3, demoAudit2, demoAudit1);
+        saveState();
+        updateDemoButtonVisibility();
+        renderDashboard();
+        showToast("Demo audits loaded. Click 'Supplier Trends' to inspect trajectory!");
+      }
+
+      function clearDemoAudits() {
+        if (!confirm("Remove all sample demo audits? Your custom audits will not be affected.")) return;
+        state.audits = state.audits.filter(function (a) { return !a.isDemo; });
+        saveState();
+        updateDemoButtonVisibility();
+        renderDashboard();
+        showToast("Demo audits removed.");
+      }
+
+      function updateDemoButtonVisibility() {
+        var hasDemo = state.audits.some(function (a) { return a.isDemo; });
+        var btnClear = document.getElementById("btnClearDemoAudits");
+        if (btnClear) { btnClear.hidden = !hasDemo; }
+      }
+
+      function openAnalytics() {
+        if (screen !== "analytics") { flushSave(); }
+        if (isNarrow()) { sidebarOpen = false; }
+        renderAnalytics();
+      }
+
+      function renderAnalytics(selectedFilter) {
+        screen = "analytics";
+        updateShell();
+        document.body.classList.remove("print-report");
+        homeView.hidden = true;
+        sessionView.hidden = true;
+        summaryView.hidden = true;
+        editorView.hidden = true;
+        actionsView.hidden = true;
+        practicesView.hidden = true;
+        reportView.hidden = true;
+        templatesView.hidden = true;
+        manualView.hidden = true;
+        dashboardView.hidden = true;
+        if (window.analyticsView) { analyticsView.hidden = false; }
+
+        var supplierMap = {};
+        var factoryMap = {};
+        state.audits.forEach(function (a) {
+          if (a.supplier && a.supplier.trim()) {
+            supplierMap[a.supplier.trim()] = (supplierMap[a.supplier.trim()] || 0) + 1;
+          }
+          if (a.factory && a.factory.trim()) {
+            factoryMap[a.factory.trim()] = (factoryMap[a.factory.trim()] || 0) + 1;
+          }
+        });
+
+        var sel = document.getElementById("analyticsSupplierSelect");
+        if (sel) {
+          var curVal = selectedFilter || sel.value || "__ALL__";
+          var optHtml = '<option value="__ALL__">All Suppliers & Factories (Overview)</option>';
+          var supKeys = Object.keys(supplierMap).sort();
+          if (supKeys.length) {
+            optHtml += '<optgroup label="By Supplier">';
+            supKeys.forEach(function (k) {
+              optHtml += '<option value="s:' + escapeHtml(k) + '"' + (curVal === "s:" + k ? ' selected' : '') + '>' + escapeHtml(k) + ' (' + supplierMap[k] + ' audits)</option>';
+            });
+            optHtml += '</optgroup>';
+          }
+          var facKeys = Object.keys(factoryMap).sort();
+          if (facKeys.length) {
+            optHtml += '<optgroup label="By Factory">';
+            facKeys.forEach(function (k) {
+              optHtml += '<option value="f:' + escapeHtml(k) + '"' + (curVal === "f:" + k ? ' selected' : '') + '>' + escapeHtml(k) + ' (' + factoryMap[k] + ' audits)</option>';
+            });
+            optHtml += '</optgroup>';
+          }
+          sel.innerHTML = optHtml;
+        }
+
+        var filterVal = sel ? sel.value : (selectedFilter || "__ALL__");
+        var matchedAudits = state.audits.filter(function (a) {
+          if (!filterVal || filterVal === "__ALL__") { return true; }
+          if (filterVal.startsWith("s:")) { return a.supplier && a.supplier.trim() === filterVal.slice(2); }
+          if (filterVal.startsWith("f:")) { return a.factory && a.factory.trim() === filterVal.slice(2); }
+          return true;
+        });
+
+        matchedAudits.sort(function (a, b) {
+          return (a.date || "").localeCompare(b.date || "");
+        });
+
+        var totalAudits = matchedAudits.length;
+        var scores = matchedAudits.map(function (a) { return computeScore(a); });
+        var validScores = scores.filter(function (s) { return s.pct !== null; }).map(function (s) { return s.pct; });
+        var avgScore = validScores.length ? (validScores.reduce(function (acc, v) { return acc + v; }, 0) / validScores.length) : null;
+
+        var latestAudit = matchedAudits[matchedAudits.length - 1];
+        var latestScore = latestAudit ? computeScore(latestAudit) : null;
+        var latestGrade = latestScore ? getAuditGrade(latestScore) : null;
+
+        var firstAudit = matchedAudits[0];
+        var firstScore = firstAudit ? computeScore(firstAudit) : null;
+
+        var deltaScore = (firstScore && latestScore && firstScore.pct !== null && latestScore.pct !== null)
+          ? (latestScore.pct - firstScore.pct)
+          : 0;
+
+        var totalCaps = 0;
+        var closedCaps = 0;
+        matchedAudits.forEach(function (a) {
+          (a.actions || []).forEach(function (c) {
+            totalCaps++;
+            if (c.status === "completed" || c.status === "closed") { closedCaps++; }
+          });
+        });
+        var capResolutionRate = totalCaps ? Math.round((closedCaps / totalCaps) * 100) : 100;
+
+        var kpiGrid = document.getElementById("analyticsKpis");
+        if (kpiGrid) {
+          kpiGrid.innerHTML = [
+            '<div class="dash-kpi"><div class="dash-kpi-val">' + totalAudits + '</div><div class="dash-kpi-label">Audits Evaluated</div></div>',
+            '<div class="dash-kpi"><div class="dash-kpi-val" style="color:var(--harbor);">' + (latestScore && latestScore.pct !== null ? formatPct(latestScore.pct) + '%' : '—') + '</div><div class="dash-kpi-label">Latest Score ' + (latestGrade ? '· <span class="grade-pill grade-pill-' + latestGrade.tone + '">' + escapeHtml(latestGrade.grade) + '</span>' : '') + '</div></div>',
+            '<div class="dash-kpi"><div class="dash-kpi-val">' + (avgScore !== null ? formatPct(avgScore) + '%' : '—') + '</div><div class="dash-kpi-label">Historical Average</div></div>',
+            '<div class="dash-kpi"><div class="dash-kpi-val" style="color:' + (deltaScore >= 0 ? 'var(--green)' : 'var(--rust)') + ';">' + (deltaScore >= 0 ? '+' : '') + formatPct(deltaScore) + '%</div><div class="dash-kpi-label">Trajectory Delta ' + (deltaScore >= 0 ? '▲' : '▼') + '</div></div>',
+            '<div class="dash-kpi"><div class="dash-kpi-val" style="color:var(--green);">' + capResolutionRate + '%</div><div class="dash-kpi-label">CAPA Resolution (' + closedCaps + '/' + totalCaps + ')</div></div>'
+          ].join('');
+        }
+
+        renderAnalyticsSvgChart(matchedAudits, scores);
+        renderAnalyticsDeptDelta(matchedAudits);
+        renderAnalyticsCapaVelocity(matchedAudits, totalCaps, closedCaps);
+        renderAnalyticsHistoryTable(matchedAudits, scores);
+      }
+
+      function renderAnalyticsSvgChart(audits, scores) {
+        var container = document.getElementById("analyticsTrajectoryChart");
+        if (!container) return;
+
+        if (audits.length === 0) {
+          container.innerHTML = '<div style="text-align:center;padding:48px 16px;color:var(--slate);">No audits recorded for the selected filter.</div>';
+          return;
+        }
+
+        var width = 840;
+        var height = 280;
+        var padLeft = 60;
+        var padRight = 40;
+        var padTop = 30;
+        var padBottom = 45;
+        var plotW = width - padLeft - padRight;
+        var plotH = height - padTop - padBottom;
+
+        var targetScore = (audits[audits.length - 1] && audits[audits.length - 1].targetPassScore) || 75;
+        var targetY = padTop + plotH * (1 - (targetScore / 100));
+
+        var pts = [];
+        audits.forEach(function (a, idx) {
+          var s = scores[idx];
+          var pct = s.pct !== null ? s.pct : 0;
+          var x = audits.length === 1 ? (padLeft + plotW / 2) : (padLeft + (idx / (audits.length - 1)) * plotW);
+          var y = padTop + plotH * (1 - (pct / 100));
+          var grade = getAuditGrade(s);
+          pts.push({ x: x, y: y, pct: pct, audit: a, grade: grade, date: a.date ? formatDate(a.date) : "No date" });
+        });
+
+        var svg = '<svg class="analytics-chart-svg" viewBox="0 0 ' + width + ' ' + height + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Score Trajectory Chart">';
+        svg += '<defs>' +
+          '<linearGradient id="trajGrad" x1="0" y1="0" x2="0" y2="1">' +
+            '<stop offset="0%" stop-color="var(--harbor)" stop-opacity="0.3"/>' +
+            '<stop offset="100%" stop-color="var(--harbor)" stop-opacity="0.0"/>' +
+          '</linearGradient>' +
+        '</defs>';
+
+        [0, 25, 50, 75, 100].forEach(function (val) {
+          var gy = padTop + plotH * (1 - (val / 100));
+          svg += '<line x1="' + padLeft + '" y1="' + gy + '" x2="' + (width - padRight) + '" y2="' + gy + '" stroke="var(--line)" stroke-width="1" stroke-dasharray="' + (val === 0 || val === 100 ? '0' : '4 4') + '"/>';
+          svg += '<text x="' + (padLeft - 10) + '" y="' + (gy + 4) + '" fill="var(--slate)" font-size="11" text-anchor="end" font-family="var(--font)">' + val + '%</text>';
+        });
+
+        svg += '<line x1="' + padLeft + '" y1="' + targetY + '" x2="' + (width - padRight) + '" y2="' + targetY + '" stroke="var(--amber)" stroke-width="2" stroke-dasharray="6 4"/>';
+        svg += '<text x="' + (width - padRight) + '" y="' + (targetY - 6) + '" fill="var(--amber)" font-size="11" font-weight="700" text-anchor="end" font-family="var(--font)">Target (' + targetScore + '%)</text>';
+
+        if (pts.length > 1) {
+          var areaPath = 'M ' + pts[0].x + ' ' + pts[0].y;
+          for (var i = 1; i < pts.length; i++) {
+            areaPath += ' L ' + pts[i].x + ' ' + pts[i].y;
+          }
+          areaPath += ' L ' + pts[pts.length - 1].x + ' ' + (padTop + plotH) + ' L ' + pts[0].x + ' ' + (padTop + plotH) + ' Z';
+          svg += '<path d="' + areaPath + '" fill="url(#trajGrad)"/>';
+
+          var linePath = 'M ' + pts[0].x + ' ' + pts[0].y;
+          for (var j = 1; j < pts.length; j++) {
+            linePath += ' L ' + pts[j].x + ' ' + pts[j].y;
+          }
+          svg += '<path d="' + linePath + '" fill="none" stroke="var(--harbor)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
+        }
+
+        pts.forEach(function (pt) {
+          var col = pt.grade.tone === "green" ? "var(--green)" : (pt.grade.tone === "harbor" ? "var(--harbor)" : (pt.grade.tone === "amber" ? "var(--amber)" : "var(--rust)"));
+          svg += '<g class="chart-point-group" tabindex="0">';
+          svg += '<title>' + escapeHtml(pt.audit.title) + '&#10;Date: ' + pt.date + '&#10;Score: ' + formatPct(pt.pct) + '% (' + pt.grade.grade + ' - ' + pt.grade.label + ')</title>';
+          svg += '<circle cx="' + pt.x + '" cy="' + pt.y + '" r="7" fill="' + col + '" stroke="var(--paper)" stroke-width="2"/>';
+          svg += '<circle cx="' + pt.x + '" cy="' + pt.y + '" r="3" fill="var(--paper)"/>';
+          svg += '<text x="' + pt.x + '" y="' + (pt.y - 12) + '" fill="var(--ink)" font-size="12" font-weight="700" text-anchor="middle" font-family="var(--font)">' + formatPct(pt.pct) + '%</text>';
+          svg += '<text x="' + pt.x + '" y="' + (padTop + plotH + 18) + '" fill="var(--slate)" font-size="10" font-weight="600" text-anchor="middle" font-family="var(--font)">' + escapeHtml(pt.date) + '</text>';
+          svg += '<text x="' + pt.x + '" y="' + (padTop + plotH + 32) + '" fill="var(--ink)" font-size="10" text-anchor="middle" font-family="var(--font)">' + escapeHtml(pt.audit.title.slice(0, 16) + (pt.audit.title.length > 16 ? '…' : '')) + '</text>';
+          svg += '</g>';
+        });
+
+        svg += '</svg>';
+        container.innerHTML = svg;
+
+        var legend = document.getElementById("analyticsChartLegend");
+        if (legend) {
+          legend.innerHTML = '<span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:var(--green);border-radius:50%;"></span> Grade A</span>' +
+            '<span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:var(--harbor);border-radius:50%;"></span> Grade B</span>' +
+            '<span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:var(--amber);border-radius:50%;"></span> Grade C</span>' +
+            '<span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:var(--rust);border-radius:50%;"></span> Grade D / Knockout</span>';
+        }
+      }
+
+      function renderAnalyticsDeptDelta(audits) {
+        var container = document.getElementById("analyticsDeptDelta");
+        if (!container) return;
+        if (audits.length < 2) {
+          container.innerHTML = '<p style="color:var(--slate);font-size:13px;text-align:center;padding:24px 0;">At least 2 audits are required to calculate department improvement deltas.</p>';
+          return;
+        }
+
+        var baseAudit = audits[0];
+        var latestAudit = audits[audits.length - 1];
+
+        var baseScore = computeScore(baseAudit);
+        var latestScore = computeScore(latestAudit);
+
+        var baseMap = {};
+        (baseScore.sections || []).forEach(function (sec) { baseMap[sec.name] = sec.pct; });
+
+        var rowsHtml = '';
+        (latestScore.sections || []).forEach(function (sec) {
+          var basePct = typeof baseMap[sec.name] === "number" ? baseMap[sec.name] : null;
+          var latestPct = sec.pct !== null ? sec.pct : 0;
+          var delta = basePct !== null ? (latestPct - basePct) : null;
+
+          var pill = delta !== null
+            ? (delta > 0
+                ? '<span class="delta-pill-pos">▲ +' + formatPct(delta) + '%</span>'
+                : (delta < 0
+                    ? '<span class="delta-pill-neg">▼ ' + formatPct(delta) + '%</span>'
+                    : '<span class="delta-pill-neutral">— 0.0%</span>'))
+            : '<span class="delta-pill-neutral">New</span>';
+
+          rowsHtml += '<div style="margin-bottom:12px;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:12px;">' +
+              '<span style="font-weight:600;color:var(--ink);">' + escapeHtml(sec.name) + '</span>' +
+              '<div>' +
+                (basePct !== null ? '<span style="color:var(--slate);margin-right:8px;">Base: ' + formatPct(basePct) + '% → Latest: ' + formatPct(latestPct) + '%</span>' : '<span style="color:var(--slate);margin-right:8px;">Latest: ' + formatPct(latestPct) + '%</span>') +
+                pill +
+              '</div>' +
+            '</div>' +
+            '<div style="height:6px;background:var(--line);border-radius:3px;overflow:hidden;position:relative;">' +
+              (basePct !== null ? '<div style="position:absolute;left:0;top:0;bottom:0;width:' + Math.min(100, Math.max(0, basePct)) + '%;background:var(--slate);opacity:0.35;"></div>' : '') +
+              '<div style="position:absolute;left:0;top:0;bottom:0;width:' + Math.min(100, Math.max(0, latestPct)) + '%;background:var(--harbor);border-radius:3px;"></div>' +
+            '</div>' +
+          '</div>';
+        });
+
+        container.innerHTML = rowsHtml || '<p style="color:var(--slate);font-size:13px;">No department scores available.</p>';
+      }
+
+      function renderAnalyticsCapaVelocity(audits, totalCaps, closedCaps) {
+        var container = document.getElementById("analyticsCapaVelocity");
+        if (!container) return;
+
+        var openCaps = 0;
+        var inProgCaps = 0;
+        audits.forEach(function (a) {
+          (a.actions || []).forEach(function (c) {
+            if (c.status === "in_progress") inProgCaps++;
+            else if (c.status !== "completed" && c.status !== "closed") openCaps++;
+          });
+        });
+
+        var resRate = totalCaps ? Math.round((closedCaps / totalCaps) * 100) : 100;
+
+        var html = '<div style="margin-bottom:20px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+            '<span style="font-size:13px;font-weight:600;color:var(--ink);">Resolution Rate</span>' +
+            '<span style="font-size:16px;font-weight:700;color:var(--green);">' + resRate + '%</span>' +
+          '</div>' +
+          '<div style="height:10px;background:var(--line);border-radius:5px;overflow:hidden;display:flex;">' +
+            '<div style="width:' + (totalCaps ? (closedCaps / totalCaps) * 100 : 0) + '%;background:var(--green);" title="Closed / Verified"></div>' +
+            '<div style="width:' + (totalCaps ? (inProgCaps / totalCaps) * 100 : 0) + '%;background:var(--amber);" title="In Progress"></div>' +
+            '<div style="width:' + (totalCaps ? (openCaps / totalCaps) * 100 : 0) + '%;background:var(--rust);" title="Open / Overdue"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:12px;text-align:center;">' +
+          '<div style="padding:10px;background:rgba(78, 140, 106, 0.1);border-radius:8px;border:1px solid rgba(78, 140, 106, 0.2);">' +
+            '<div style="font-size:18px;font-weight:700;color:var(--green);">' + closedCaps + '</div>' +
+            '<div style="font-size:11px;font-weight:600;color:var(--slate);">Closed / Verified</div>' +
+          '</div>' +
+          '<div style="padding:10px;background:rgba(224, 163, 62, 0.1);border-radius:8px;border:1px solid rgba(224, 163, 62, 0.2);">' +
+            '<div style="font-size:18px;font-weight:700;color:var(--amber);">' + inProgCaps + '</div>' +
+            '<div style="font-size:11px;font-weight:600;color:var(--slate);">In Progress</div>' +
+          '</div>' +
+          '<div style="padding:10px;background:rgba(180, 71, 47, 0.1);border-radius:8px;border:1px solid rgba(180, 71, 47, 0.2);">' +
+            '<div style="font-size:18px;font-weight:700;color:var(--rust);">' + openCaps + '</div>' +
+            '<div style="font-size:11px;font-weight:600;color:var(--slate);">Open Items</div>' +
+          '</div>' +
+        '</div>';
+
+        container.innerHTML = html;
+      }
+
+      function renderAnalyticsHistoryTable(audits, scores) {
+        var tbody = document.querySelector("#analyticsHistoryTable tbody");
+        if (!tbody) return;
+
+        if (audits.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--slate);padding:24px;">No audits found.</td></tr>';
+          return;
+        }
+
+        var trs = audits.map(function (a, idx) {
+          var s = scores[idx];
+          var g = getAuditGrade(s);
+          var openCap = (a.actions || []).filter(function (c) { return c.status !== "completed" && c.status !== "closed"; }).length;
+
+          return '<tr>' +
+            '<td>' + (a.date ? formatDate(a.date) : '—') + '</td>' +
+            '<td><strong>' + escapeHtml(a.title) + '</strong>' + (a.isLocked ? ' 🔒' : '') + '</td>' +
+            '<td>' + escapeHtml(a.factory || a.supplier || '—') + '</td>' +
+            '<td>' + escapeHtml(a.auditor || '—') + '</td>' +
+            '<td><strong>' + (s.pct !== null ? formatPct(s.pct) + '%' : '—') + '</strong></td>' +
+            '<td><span class="grade-pill grade-pill-' + g.tone + '">' + escapeHtml(g.grade) + '</span></td>' +
+            '<td>' + (openCap > 0 ? '<span class="badge badge-rust">' + openCap + ' open CAP</span>' : '<span class="badge badge-green">All clear</span>') + '</td>' +
+            '<td><button type="button" class="btn btn-secondary btn-sm" onclick="openAudit(\'' + a.id + '\')">Open Audit</button></td>' +
+          '</tr>';
+        });
+
+        tbody.innerHTML = trs.join('');
+      }
+
       function openAuditModal(id) {
         editingAuditId = id || null;
         formError.hidden = true;
@@ -8636,6 +11459,12 @@
           document.getElementById("fDate").value = a.date;
           document.getElementById("fProduct").value = a.productType;
           document.getElementById("fWorkers").value = a.workers;
+          var fTarget = document.getElementById("fTargetScore");
+          if (fTarget) { fTarget.value = a.targetPassScore || 75; }
+          modalGeolocation = a.geolocation || null;
+          modalLogoDataUrl = a.logo || (state && state.companyLogo) || "";
+          updateModalGpsDisplay();
+          updateModalLogoDisplay();
 
           fTemplateField.hidden = true;
           var tpl = templateForAudit(a);
@@ -8691,7 +11520,10 @@
           auditor: document.getElementById("fAuditor").value.trim(),
           date: document.getElementById("fDate").value,
           productType: document.getElementById("fProduct").value.trim(),
-          workers: document.getElementById("fWorkers").value.trim()
+          workers: document.getElementById("fWorkers").value.trim(),
+          targetPassScore: parseInt(document.getElementById("fTargetScore").value, 10) || 75,
+          geolocation: modalGeolocation,
+          logo: modalLogoDataUrl
         };
       }
 
@@ -8710,6 +11542,10 @@
           return;
         }
 
+        var defLogoCheck = document.getElementById("fSetDefaultLogo");
+        if (defLogoCheck && defLogoCheck.checked && modalLogoDataUrl) {
+          state.companyLogo = modalLogoDataUrl;
+        }
         if (editingAuditId) {
           var audit = findAudit(editingAuditId);
           if (!audit) { closeAuditModal(); return; }
@@ -8922,13 +11758,22 @@
       function photoThumbHtml(id, kind, ownerId) {
         var p = photoCache[id];
         if (!p) { return ""; }
-        return '<span class="photo-thumb">' +
-          '<img src="' + p.dataUrl + '" alt="' +
-            escapeHtml(p.name || "Audit photo") + '" />' +
-          '<button type="button" class="rm" data-remove-photo="' + escapeHtml(id) +
-            '" data-photo-kind="' + escapeHtml(kind) + '" data-photo-owner="' +
-            escapeHtml(ownerId) + '" aria-label="Remove photo" title="Remove photo">×</button>' +
-          '</span>';
+        var dateStr = p.createdAt ? formatDate(p.createdAt) : "";
+        var captionStr = p.caption ? escapeHtml(p.caption) : "";
+        return '<div class="photo-thumb-card">' +
+          '<div style="position:relative;">' +
+            '<img src="' + p.dataUrl + '" alt="' + escapeHtml(p.name || "Audit photo") + '" />' +
+            '<button type="button" class="rm" data-remove-photo="' + escapeHtml(id) +
+              '" data-photo-kind="' + escapeHtml(kind) + '" data-photo-owner="' +
+              escapeHtml(ownerId) + '" aria-label="Remove photo" title="Remove photo">×</button>' +
+            (dateStr ? '<span class="photo-badge-date">' + escapeHtml(dateStr) + '</span>' : '') +
+          '</div>' +
+          (captionStr ? '<div class="photo-caption-text">“' + captionStr + '”</div>' : '') +
+          '<div class="photo-btn-bar">' +
+            '<button type="button" class="photo-mini-btn" data-markup-photo="' + escapeHtml(id) + '" title="Annotate / draw on photo">✏️ Markup</button>' +
+            '<button type="button" class="photo-mini-btn" data-caption-photo="' + escapeHtml(id) + '" title="Add or edit caption">💬 Caption</button>' +
+          '</div>' +
+        '</div>';
       }
 
       function photoGridHtml(kind, ownerId, ids, emptyText) {
@@ -9115,6 +11960,94 @@
       // Session navigation
       btnUnanswered.addEventListener("click", goNextUnanswered);
       btnSummary.addEventListener("click", openSummary);
+
+      // Stage 16 event listeners
+      var btnThemeToggle = document.getElementById("btnThemeToggle");
+      if (btnThemeToggle) { btnThemeToggle.addEventListener("click", toggleTheme); }
+
+      var btnSupplierTrends = document.getElementById("btnSupplierTrends");
+      if (btnSupplierTrends) { btnSupplierTrends.addEventListener("click", openAnalytics); }
+
+      var selAnalyticsSupplier = document.getElementById("analyticsSupplierSelect");
+      if (selAnalyticsSupplier) {
+        selAnalyticsSupplier.addEventListener("change", function () {
+          renderAnalytics(selAnalyticsSupplier.value);
+        });
+      }
+
+      var btnAcquireGps = document.getElementById("btnAcquireGps");
+      if (btnAcquireGps) { btnAcquireGps.addEventListener("click", acquireDeviceGps); }
+
+      var btnClearGps = document.getElementById("btnClearGps");
+      if (btnClearGps) {
+        btnClearGps.addEventListener("click", function () {
+          modalGeolocation = null;
+          updateModalGpsDisplay();
+        });
+      }
+
+      var btnChooseLogo = document.getElementById("btnChooseLogo");
+      var fLogoFile = document.getElementById("fLogoFile");
+      if (btnChooseLogo && fLogoFile) {
+        btnChooseLogo.addEventListener("click", function () { fLogoFile.click(); });
+        fLogoFile.addEventListener("change", function () {
+          if (fLogoFile.files && fLogoFile.files[0]) {
+            handleLogoFileSelect(fLogoFile.files[0]);
+          }
+        });
+      }
+
+      var btnRemoveLogo = document.getElementById("btnRemoveLogo");
+      if (btnRemoveLogo) {
+        btnRemoveLogo.addEventListener("click", function () {
+          modalLogoDataUrl = "";
+          updateModalLogoDisplay();
+        });
+      }
+
+      
+      // Stage 17 event listeners
+      var btnLoadDemo = document.getElementById("btnLoadDemoAudits");
+      if (btnLoadDemo) { btnLoadDemo.addEventListener("click", loadDemoAudits); }
+
+      var btnClearDemo = document.getElementById("btnClearDemoAudits");
+      if (btnClearDemo) { btnClearDemo.addEventListener("click", clearDemoAudits); }
+
+      var btnTimerToggle = document.getElementById("btnTimerToggle");
+      if (btnTimerToggle) { btnTimerToggle.addEventListener("click", toggleWalkthroughTimer); }
+
+      var btnTimerReset = document.getElementById("btnTimerReset");
+      if (btnTimerReset) { btnTimerReset.addEventListener("click", resetWalkthroughTimer); }
+
+      var selWatermark = document.getElementById("reportWatermarkSelect");
+      if (selWatermark) {
+        selWatermark.addEventListener("change", function () {
+          activeWatermarkSetting = selWatermark.value;
+          renderReport();
+        });
+      }
+
+      document.body.addEventListener("click", function (e) {
+        if (e.target && e.target.id === "btnAutoNarrative") {
+          var curAudit = getActiveAudit();
+          if (!curAudit) return;
+          var curScore = computeScore(curAudit);
+          var narrative = generateExecutiveSummaryNarrative(curAudit, curScore);
+          var txt = document.getElementById("reportComments");
+          if (txt) {
+            txt.value = narrative;
+            curAudit.reportComments = narrative;
+            saveState();
+            var printP = document.querySelector(".report-comments-print p");
+            if (printP) { printP.textContent = narrative; }
+            showToast("Executive narrative generated.");
+          }
+        }
+      });
+
+      // Initialize theme
+      applyTheme(currentTheme);
+      updateDemoButtonVisibility();
       btnPrevSection.addEventListener("click", function () { goAdjacentSection(-1); });
       btnNextSection.addEventListener("click", function () { goAdjacentSection(1); });
       sectionSelect.addEventListener("change", function () {
@@ -9561,6 +12494,758 @@
       });
 
       // =========================================================
+      // Hands-Free Voice-to-Text Dictation Engine
+      // =========================================================
+      var activeSpeechRec = null;
+      var activeVoiceBtn = null;
+
+      function toggleVoiceRecognition(btn, textarea) {
+        var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRec) {
+          showToast("Speech recognition is not supported in this browser.");
+          return;
+        }
+
+        if (activeSpeechRec) {
+          activeSpeechRec.stop();
+          activeSpeechRec = null;
+          if (activeVoiceBtn) { activeVoiceBtn.classList.remove("is-listening"); }
+          activeVoiceBtn = null;
+          return;
+        }
+
+        try {
+          var rec = new SpeechRec();
+          rec.continuous = true;
+          rec.interimResults = false;
+          rec.lang = "en-US";
+
+          rec.onstart = function () {
+            btn.classList.add("is-listening");
+            activeVoiceBtn = btn;
+            activeSpeechRec = rec;
+            showToast("🎙️ Listening... speak your observation.");
+          };
+
+          rec.onresult = function (event) {
+            var transcript = "";
+            for (var i = event.resultIndex; i < event.results.length; i++) {
+              if (event.results[i].isFinal) {
+                transcript += event.results[i][0].transcript;
+              }
+            }
+            if (transcript) {
+              var current = textarea.value;
+              textarea.value = (current ? current.trim() + " " : "") + transcript.trim();
+              textarea.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+          };
+
+          rec.onerror = function (e) {
+            btn.classList.remove("is-listening");
+            activeVoiceBtn = null;
+            activeSpeechRec = null;
+            if (e.error !== "no-speech") {
+              showToast("Voice dictation error: " + e.error);
+            }
+          };
+
+          rec.onend = function () {
+            btn.classList.remove("is-listening");
+            activeVoiceBtn = null;
+            activeSpeechRec = null;
+          };
+
+          rec.start();
+        } catch (err) {
+          showToast("Could not start speech recognition.");
+        }
+      }
+
+      // =========================================================
+      // Fast 1-Click CAP Generation
+      // =========================================================
+      function openFastCapModal(testId) {
+        var audit = getActiveAudit();
+        if (!audit) { return; }
+        var q = testById(testId);
+        if (!q) { return; }
+        var sec = sectionById(q.sectionId);
+        var ans = audit.answers[testId] || { option: "", comment: "", photos: [] };
+
+        actionEditingId = null;
+        actionEditingIssuePhotos = (ans.photos || []).slice();
+        actionEditingProofPhotos = [];
+
+        populateActionSectionSelect(q.sectionId);
+        populateActionTestSelect(q.sectionId, q.id);
+
+        aIssue.value = "Section " + (q.sectionNumber || "") + " (" + (sec ? sec.name : "") + ") - " + q.text;
+        aRootCause.value = ans.comment ? ans.comment : "";
+        aCorrective.value = "";
+        aPreventive.value = "";
+        aOwner.value = "";
+        aDueDate.value = "";
+        aPriority.value = (q.severity === "critical" || q.severity === "major") ? "High" : "Medium";
+        aStatus.value = "Open";
+
+        actionModalTitle.textContent = "Raise corrective action (CAP)";
+        actionFormError.hidden = true;
+        renderActionModalPhotos();
+        actionModal.hidden = false;
+        document.body.classList.add("modal-open");
+        aCorrective.focus();
+      }
+
+      // =========================================================
+      // Digital Signature Pad Engine
+      // =========================================================
+      var sigActiveRole = null;
+      var sigDrawing = false;
+      var sigCtx = null;
+      var sigHasDrawn = false;
+
+      function initSigCanvas() {
+        if (!sigCanvas) { return; }
+        sigCtx = sigCanvas.getContext("2d");
+        var dpr = window.devicePixelRatio || 1;
+        sigCanvas.width = 500 * dpr;
+        sigCanvas.height = 170 * dpr;
+        sigCtx.scale(dpr, dpr);
+        sigCtx.lineCap = "round";
+        sigCtx.lineJoin = "round";
+        sigCtx.strokeStyle = "#1B2A33";
+        sigCtx.lineWidth = 2.5;
+
+        function getPos(e) {
+          var r = sigCanvas.getBoundingClientRect();
+          var clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+          var clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+          return {
+            x: clientX - r.left,
+            y: clientY - r.top
+          };
+        }
+
+        sigCanvas.onpointerdown = function (e) {
+          sigDrawing = true;
+          sigHasDrawn = true;
+          var pos = getPos(e);
+          sigCtx.beginPath();
+          sigCtx.moveTo(pos.x, pos.y);
+          e.preventDefault();
+        };
+
+        window.addEventListener("pointermove", function (e) {
+          if (!sigDrawing || !sigCtx) { return; }
+          var pos = getPos(e);
+          sigCtx.lineTo(pos.x, pos.y);
+          sigCtx.stroke();
+          e.preventDefault();
+        });
+
+        window.addEventListener("pointerup", function () {
+          sigDrawing = false;
+        });
+      }
+
+      function openSigModal(role) {
+        sigActiveRole = role;
+        var audit = getActiveAudit();
+        if (!audit) { return; }
+
+        var existing = role === "auditor" ? audit.auditorSig : audit.repSig;
+        sigName.value = (existing && existing.name) ? existing.name : (role === "auditor" ? audit.auditor : audit.representative);
+        sigTitle.value = (existing && existing.title) ? existing.title : (role === "auditor" ? "Lead Quality Auditor" : "Factory Management Representative");
+        sigDate.value = (existing && existing.date) ? existing.date : todayISO();
+
+        sigModalTitle.textContent = role === "auditor" ? "Lead Auditor Signature" : "Factory Representative Signature";
+        sigFormError.hidden = true;
+        sigModal.hidden = false;
+        document.body.classList.add("modal-open");
+
+        setTimeout(function () {
+          initSigCanvas();
+          if (existing && existing.dataUrl) {
+            var img = new Image();
+            img.onload = function () {
+              sigCtx.drawImage(img, 0, 0, 500, 170);
+              sigHasDrawn = true;
+            };
+            img.src = existing.dataUrl;
+          } else {
+            sigHasDrawn = false;
+          }
+        }, 50);
+      }
+
+      function clearSigCanvas() {
+        if (!sigCtx) { return; }
+        sigCtx.clearRect(0, 0, 500, 170);
+        sigHasDrawn = false;
+      }
+
+      function saveSignature() {
+        var name = (sigName.value || "").trim();
+        if (!name) {
+          sigFormError.textContent = "Please enter the signatory's full name.";
+          sigFormError.hidden = false;
+          return;
+        }
+        if (!sigHasDrawn) {
+          sigFormError.textContent = "Please draw your signature on the pad above.";
+          sigFormError.hidden = false;
+          return;
+        }
+
+        var audit = getActiveAudit();
+        if (!audit) { return; }
+
+        var sigRecord = {
+          name: name,
+          title: (sigTitle.value || "").trim(),
+          date: sigDate.value || todayISO(),
+          dataUrl: sigCanvas.toDataURL("image/png"),
+          signedAt: nowISO()
+        };
+
+        if (sigActiveRole === "auditor") {
+          audit.auditorSig = sigRecord;
+        } else {
+          audit.repSig = sigRecord;
+        }
+
+        audit.updatedAt = nowISO();
+        saveState();
+
+        sigModal.hidden = true;
+        document.body.classList.remove("modal-open");
+        showToast("Signature saved.");
+
+        if (screen === "summary") { renderSummary(); }
+        else if (screen === "report") { renderReport(); }
+      }
+
+      if (btnClearSig) { btnClearSig.addEventListener("click", clearSigCanvas); }
+      if (btnCancelSig) {
+        btnCancelSig.addEventListener("click", function () {
+          sigModal.hidden = true;
+          document.body.classList.remove("modal-open");
+        });
+      }
+      if (btnCloseSigModal) {
+        btnCloseSigModal.addEventListener("click", function () {
+          sigModal.hidden = true;
+          document.body.classList.remove("modal-open");
+        });
+      }
+      if (btnSaveSig) { btnSaveSig.addEventListener("click", saveSignature); }
+
+      // =========================================================
+      // Photo Markup & Annotation Tool Engine
+      // =========================================================
+      var markupPhotoId = null;
+      var markupTool = "pen";
+      var markupColor = "#DC2626";
+      var markupHistory = [];
+      var markupDrawing = false;
+      var markupStartX = 0, markupStartY = 0;
+      var markupCtx = null;
+      var markupBaseImg = null;
+
+      function openMarkupModal(photoId) {
+        var p = photoCache[photoId];
+        if (!p) { return; }
+        markupPhotoId = photoId;
+        markupHistory = [];
+        markupTool = "pen";
+        markupColor = "#DC2626";
+
+        markupModal.hidden = false;
+        document.body.classList.add("modal-open");
+
+        var img = new Image();
+        img.onload = function () {
+          markupBaseImg = img;
+          markupCanvas.width = img.naturalWidth || img.width;
+          markupCanvas.height = img.naturalHeight || img.height;
+          markupCtx = markupCanvas.getContext("2d");
+          markupCtx.drawImage(img, 0, 0);
+          saveMarkupHistory();
+          setupMarkupEvents();
+        };
+        img.src = p.dataUrl;
+      }
+
+      function saveMarkupHistory() {
+        if (!markupCtx) { return; }
+        try {
+          markupHistory.push(markupCtx.getImageData(0, 0, markupCanvas.width, markupCanvas.height));
+          if (markupHistory.length > 15) { markupHistory.shift(); }
+        } catch (e) {}
+      }
+
+      function undoMarkup() {
+        if (!markupCtx || markupHistory.length <= 1) { return; }
+        markupHistory.pop();
+        var prev = markupHistory[markupHistory.length - 1];
+        if (prev) {
+          markupCtx.putImageData(prev, 0, 0);
+        }
+      }
+
+      function clearMarkup() {
+        if (!markupCtx || !markupBaseImg) { return; }
+        markupCtx.drawImage(markupBaseImg, 0, 0);
+        markupHistory = [];
+        saveMarkupHistory();
+      }
+
+      function setupMarkupEvents() {
+        function getCanvasPos(e) {
+          var r = markupCanvas.getBoundingClientRect();
+          var scaleX = markupCanvas.width / r.width;
+          var scaleY = markupCanvas.height / r.height;
+          var clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+          var clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+          return {
+            x: (clientX - r.left) * scaleX,
+            y: (clientY - r.top) * scaleY
+          };
+        }
+
+        markupCanvas.onpointerdown = function (e) {
+          markupDrawing = true;
+          var pos = getCanvasPos(e);
+          markupStartX = pos.x;
+          markupStartY = pos.y;
+          markupCtx.beginPath();
+          markupCtx.moveTo(pos.x, pos.y);
+          markupCtx.strokeStyle = markupColor;
+          markupCtx.fillStyle = markupColor;
+          markupCtx.lineWidth = Math.max(3, Math.round(markupCanvas.width / 220));
+          markupCtx.lineCap = "round";
+          markupCtx.lineJoin = "round";
+          e.preventDefault();
+        };
+
+        window.addEventListener("pointermove", function (e) {
+          if (!markupDrawing || !markupCtx) { return; }
+          var pos = getCanvasPos(e);
+          if (markupTool === "pen") {
+            markupCtx.lineTo(pos.x, pos.y);
+            markupCtx.stroke();
+          } else {
+            if (markupHistory.length > 0) {
+              markupCtx.putImageData(markupHistory[markupHistory.length - 1], 0, 0);
+            }
+            markupCtx.beginPath();
+            markupCtx.strokeStyle = markupColor;
+            markupCtx.lineWidth = Math.max(3, Math.round(markupCanvas.width / 220));
+            if (markupTool === "circle") {
+              var rx = Math.abs(pos.x - markupStartX) / 2;
+              var ry = Math.abs(pos.y - markupStartY) / 2;
+              var cx = Math.min(markupStartX, pos.x) + rx;
+              var cy = Math.min(markupStartY, pos.y) + ry;
+              markupCtx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+              markupCtx.stroke();
+            } else if (markupTool === "rect") {
+              markupCtx.strokeRect(markupStartX, markupStartY, pos.x - markupStartX, pos.y - markupStartY);
+            } else if (markupTool === "arrow") {
+              drawMarkupArrow(markupCtx, markupStartX, markupStartY, pos.x, pos.y);
+            }
+          }
+          e.preventDefault();
+        });
+
+        window.addEventListener("pointerup", function () {
+          if (markupDrawing) {
+            markupDrawing = false;
+            saveMarkupHistory();
+          }
+        });
+      }
+
+      function drawMarkupArrow(ctx, fromx, fromy, tox, toy) {
+        var headlen = Math.max(12, Math.round(ctx.lineWidth * 3));
+        var angle = Math.atan2(toy - fromy, tox - fromx);
+        ctx.beginPath();
+        ctx.moveTo(fromx, fromy);
+        ctx.lineTo(tox, toy);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(tox, toy);
+        ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function saveAnnotatedPhoto() {
+        if (!markupPhotoId || !markupCanvas) { return; }
+        var p = photoCache[markupPhotoId];
+        if (!p) { return; }
+
+        var newDataUrl = markupCanvas.toDataURL("image/jpeg", 0.88);
+        p.dataUrl = newDataUrl;
+        p.updatedAt = nowISO();
+
+        savePhoto(p).then(function () {
+          markupModal.hidden = true;
+          document.body.classList.remove("modal-open");
+          showToast("Annotated photo saved.");
+          if (screen === "session") { renderQuestion(); }
+          else if (screen === "actions") { renderActions(); }
+          else if (screen === "practices") { renderPractices(); }
+        });
+      }
+
+      if (btnUndoMarkup) { btnUndoMarkup.addEventListener("click", undoMarkup); }
+      if (btnClearMarkup) { btnClearMarkup.addEventListener("click", clearMarkup); }
+      if (btnCancelMarkup) {
+        btnCancelMarkup.addEventListener("click", function () {
+          markupModal.hidden = true;
+          document.body.classList.remove("modal-open");
+        });
+      }
+      if (btnCloseMarkupModal) {
+        btnCloseMarkupModal.addEventListener("click", function () {
+          markupModal.hidden = true;
+          document.body.classList.remove("modal-open");
+        });
+      }
+      if (btnSaveMarkup) { btnSaveMarkup.addEventListener("click", saveAnnotatedPhoto); }
+
+      document.querySelectorAll(".markup-btn[data-tool]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          document.querySelectorAll(".markup-btn[data-tool]").forEach(function (b) { b.classList.remove("is-active"); });
+          btn.classList.add("is-active");
+          markupTool = btn.getAttribute("data-tool");
+        });
+      });
+
+      document.querySelectorAll(".markup-color-dot[data-color]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          document.querySelectorAll(".markup-color-dot[data-color]").forEach(function (b) { b.classList.remove("is-active"); });
+          btn.classList.add("is-active");
+          markupColor = btn.getAttribute("data-color");
+        });
+      });
+
+      // =========================================================
+      // Photo Caption Engine
+      // =========================================================
+      var captionPhotoId = null;
+
+      function openCaptionModal(photoId) {
+        var p = photoCache[photoId];
+        if (!p) { return; }
+        captionPhotoId = photoId;
+        photoCaptionInput.value = p.caption || "";
+        captionModal.hidden = false;
+        document.body.classList.add("modal-open");
+        photoCaptionInput.focus();
+      }
+
+      function savePhotoCaption() {
+        if (!captionPhotoId) { return; }
+        var p = photoCache[captionPhotoId];
+        if (!p) { return; }
+
+        p.caption = (photoCaptionInput.value || "").trim();
+        p.updatedAt = nowISO();
+
+        savePhoto(p).then(function () {
+          captionModal.hidden = true;
+          document.body.classList.remove("modal-open");
+          showToast("Caption saved.");
+          if (screen === "session") { renderQuestion(); }
+          else if (screen === "actions") { renderActions(); }
+          else if (screen === "practices") { renderPractices(); }
+        });
+      }
+
+      if (btnCancelCaption) {
+        btnCancelCaption.addEventListener("click", function () {
+          captionModal.hidden = true;
+          document.body.classList.remove("modal-open");
+        });
+      }
+      if (btnCloseCaptionModal) {
+        btnCloseCaptionModal.addEventListener("click", function () {
+          captionModal.hidden = true;
+          document.body.classList.remove("modal-open");
+        });
+      }
+      if (btnSaveCaption) { btnSaveCaption.addEventListener("click", savePhotoCaption); }
+
+      // =========================================================
+      // Audit Package Portability (.auditpro)
+      // =========================================================
+      function downloadJsonFile(obj, fileName) {
+        var blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      }
+
+      function exportAuditPackage(auditId) {
+        var audit = findAudit(auditId);
+        if (!audit) { return; }
+        var tpl = templateForAudit(audit);
+
+        var photoIds = {};
+        Object.keys(audit.answers || {}).forEach(function (k) {
+          (audit.answers[k].photos || []).forEach(function (pid) { photoIds[pid] = true; });
+        });
+        (audit.actions || []).forEach(function (a) {
+          (a.issuePhotos || []).forEach(function (pid) { photoIds[pid] = true; });
+          (a.proofPhotos || []).forEach(function (pid) { photoIds[pid] = true; });
+        });
+        (audit.practices || []).forEach(function (p) {
+          (p.photos || []).forEach(function (pid) { photoIds[pid] = true; });
+        });
+
+        var photosList = [];
+        Object.keys(photoIds).forEach(function (pid) {
+          if (photoCache[pid]) { photosList.push(photoCache[pid]); }
+        });
+
+        var packageData = {
+          app: "Audit Pro",
+          kind: "audit-package",
+          version: 2,
+          exportedAt: nowISO(),
+          audit: audit,
+          template: tpl,
+          photos: photosList
+        };
+
+        var fileName = "Audit Pro - package - " + (audit.title || "audit").replace(/[\\/:*?"<>|]+/g, "-").slice(0, 40) + " - " + todayISO() + ".auditpro";
+        downloadJsonFile(packageData, fileName);
+        showToast("Audit package exported with " + photosList.length + " photos.");
+      }
+
+      function exportAllAuditsPackage() {
+        var allPhotos = Object.keys(photoCache).map(function (k) { return photoCache[k]; });
+        var packageData = {
+          app: "Audit Pro",
+          kind: "audit-full-backup",
+          version: 2,
+          exportedAt: nowISO(),
+          audits: state.audits,
+          templates: state.templates,
+          photos: allPhotos
+        };
+
+        var fileName = "Audit Pro - Full Backup - " + todayISO() + ".auditpro";
+        downloadJsonFile(packageData, fileName);
+        showToast("Complete backup exported (" + state.audits.length + " audits, " + allPhotos.length + " photos).");
+      }
+
+      function importAuditPackage(file) {
+        if (!file) { return; }
+        var reader = new FileReader();
+        reader.onload = function () {
+          try {
+            var data = JSON.parse(String(reader.result || ""));
+            if (!data || data.app !== "Audit Pro") {
+              throw new Error("Invalid Audit Pro package");
+            }
+
+            var photos = Array.isArray(data.photos) ? data.photos : [];
+            var savePromises = photos.map(function (p) {
+              return savePhoto(p);
+            });
+
+            Promise.all(savePromises).then(function () {
+              if (data.kind === "audit-full-backup") {
+                if (Array.isArray(data.templates) && data.templates.length) {
+                  data.templates.forEach(function (tpl) {
+                    if (!templateById(tpl.id)) { state.templates.push(normalizeTemplate(tpl)); }
+                  });
+                }
+                if (Array.isArray(data.audits)) {
+                  data.audits.forEach(function (a) {
+                    var idx = state.audits.findIndex(function (x) { return x.id === a.id; });
+                    if (idx >= 0) { state.audits[idx] = normalizeAudit(a); }
+                    else { state.audits.push(normalizeAudit(a)); }
+                  });
+                }
+                saveState();
+                renderAudits();
+                updateDashboard();
+                showToast("Full backup restored: " + data.audits.length + " audits.");
+              } else {
+                if (data.template && !templateById(data.template.id)) {
+                  var newTpl = normalizeTemplate(data.template);
+                  makeTemplateEditable(newTpl);
+                  state.templates.push(newTpl);
+                }
+                if (data.audit) {
+                  var importedAudit = normalizeAudit(data.audit);
+                  var existingIdx = state.audits.findIndex(function (x) { return x.id === importedAudit.id; });
+                  if (existingIdx >= 0) {
+                    importedAudit.id = makeId("audit");
+                    importedAudit.title += " (Imported)";
+                  }
+                  state.audits.push(importedAudit);
+                  state.activeAuditId = importedAudit.id;
+                  saveState();
+                  renderAudits();
+                  updateDashboard();
+                  showToast("Audit '" + importedAudit.title + "' imported with " + photos.length + " photos.");
+                }
+              }
+            });
+          } catch (e) {
+            showToast("Failed to import package: " + e.message);
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      if (btnImportAuditPackage) {
+        btnImportAuditPackage.addEventListener("click", function () {
+          auditPackageInput.click();
+        });
+      }
+      if (btnBackupAllAudits) {
+        btnBackupAllAudits.addEventListener("click", exportAllAuditsPackage);
+      }
+      if (btnSidebarBackup) {
+        btnSidebarBackup.addEventListener("click", exportAllAuditsPackage);
+      }
+      if (btnSidebarRestore) {
+        btnSidebarRestore.addEventListener("click", function () {
+          auditPackageInput.click();
+        });
+      }
+      if (auditPackageInput) {
+        auditPackageInput.addEventListener("change", function () {
+          var f = auditPackageInput.files && auditPackageInput.files[0];
+          if (f) {
+            importAuditPackage(f);
+            auditPackageInput.value = "";
+          }
+        });
+      }
+
+      // In-checklist search & filter chips listeners
+      if (sessionSearchInput) {
+        sessionSearchInput.addEventListener("input", function () {
+          sessionSearchQuery = sessionSearchInput.value;
+          renderQuestion();
+        });
+      }
+
+      document.querySelectorAll(".session-filter-chips .s-chip").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          document.querySelectorAll(".session-filter-chips .s-chip").forEach(function (b) { b.classList.remove("is-active"); });
+          btn.classList.add("is-active");
+          sessionFilterMode = btn.getAttribute("data-sfilter") || "all";
+          renderQuestion();
+        });
+      });
+
+      // Delegation for Fast CAP, Sign-off, Markup, Caption, Package Export
+      document.addEventListener("click", function (e) {
+        var fastCapBtn = e.target.closest("[data-fast-cap]");
+        if (fastCapBtn) {
+          openFastCapModal(fastCapBtn.getAttribute("data-fast-cap"));
+          return;
+        }
+
+        var signRoleBtn = e.target.closest("[data-sign-role]");
+        if (signRoleBtn) {
+          openSigModal(signRoleBtn.getAttribute("data-sign-role"));
+          return;
+        }
+
+        var markupBtn = e.target.closest("[data-markup-photo]");
+        if (markupBtn) {
+          openMarkupModal(markupBtn.getAttribute("data-markup-photo"));
+          return;
+        }
+
+        var captionBtn = e.target.closest("[data-caption-photo]");
+        if (captionBtn) {
+          openCaptionModal(captionBtn.getAttribute("data-caption-photo"));
+          return;
+        }
+
+        var exportPkgBtn = e.target.closest("[data-export-pkg]");
+        if (exportPkgBtn) {
+          exportAuditPackage(exportPkgBtn.getAttribute("data-export-pkg"));
+          return;
+        }
+
+        var reAuditBtn = e.target.closest("[data-re-audit]");
+        if (reAuditBtn) {
+          createFollowUpAudit(reAuditBtn.getAttribute("data-re-audit"));
+          return;
+        }
+
+        var lockBtn = e.target.closest("#btnLockAudit");
+        if (lockBtn) {
+          var curAudit = getActiveAudit();
+          if (curAudit) {
+            curAudit.isLocked = true;
+            saveState();
+            renderSummary();
+            showToast("Audit finalized and locked against edits.");
+          }
+          return;
+        }
+
+        var unlockBtn = e.target.closest("#btnUnlockAudit");
+        if (unlockBtn) {
+          var curAudit2 = getActiveAudit();
+          if (curAudit2) {
+            openConfirmModal("Unlock Audit for Correction?", "Unlocking this audit will re-enable editing, but existing digital signatures will be invalidated to prevent unauthorized alterations. Do you want to unlock?", function () {
+              curAudit2.isLocked = false;
+              curAudit2.auditorSig = null;
+              curAudit2.repSig = null;
+              saveState();
+              renderSummary();
+              showToast("Audit unlocked. Signatures have been reset.");
+            });
+          }
+          return;
+        }
+
+        var goSumBtn = e.target.closest("#btnLockGoSum, [data-goto-summary]");
+        if (goSumBtn) {
+          openSummary();
+          return;
+        }
+
+        var photoAnnexBtn = e.target.closest("#btnExportPhotoAnnex, #btnReportPhotoAnnex");
+        if (photoAnnexBtn) {
+          var curAudit3 = getActiveAudit();
+          if (curAudit3) {
+            exportPhotoAnnexZip(curAudit3.id);
+          }
+          return;
+        }
+
+        var voiceBtn = e.target.closest("[data-voice-target]");
+        if (voiceBtn) {
+          var targetId = voiceBtn.getAttribute("data-voice-target");
+          var textarea = document.getElementById(targetId);
+          if (textarea) {
+            toggleVoiceRecognition(voiceBtn, textarea);
+          }
+          return;
+        }
+      });
+
+      // =========================================================
       // Start
       // =========================================================
       // Load the default template into the screen globals. Runs last so every
@@ -9585,6 +13270,7 @@
       if (isNarrow()) { sidebarOpen = false; }
 
       renderDashboard();
+      updateStorageMeter();
 
       // Photos live in IndexedDB. Load them now so thumbnails are available
       // when a session, CAP, or good-practice screen opens.
