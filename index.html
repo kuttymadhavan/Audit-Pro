@@ -1221,7 +1221,7 @@
       .topbar { flex-wrap: wrap; gap: 10px; padding: 10px 16px; }
       .view-dashboard,
       .view-manual { padding: 24px 16px 40px; }
-      .dash-kpis { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
+      .dash-kpis, .dash-kpi-grid { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
       .kpi-value { font-size: 21px; }
       .dash-grid { grid-template-columns: 1fr; }
       .dash-panel { padding: 14px 15px 16px; }
@@ -3685,13 +3685,19 @@
       <p class="sidebar-label">At a glance</p>
       <div class="sidebar-mini" id="sidebarMini"></div>
 
-      <p class="sidebar-label">Storage</p>
+      <p class="sidebar-label">Storage &amp; Cloud Sync</p>
       <div class="sidebar-storage">
         <div class="storage-head">
-          <span>Local storage</span>
+          <span id="sidebarStorageTitle">Local storage</span>
           <span id="storageUsedText">0 KB</span>
         </div>
         <div class="storage-track"><div class="storage-bar" id="storageBar"></div></div>
+        <div id="sidebarCloudSyncStatus" style="margin-top:6px; font-size:10px; line-height:1.2; color:var(--slate); display:flex; align-items:center; gap:4px;">
+          <span id="sidebarSyncIcon">○</span> <span id="sidebarSyncText">Local Only</span>
+        </div>
+        <div style="margin-top:8px;">
+          <button type="button" class="sidebar-btn" id="btnSidebarCloudSync" style="width:100%; font-weight:600; color:var(--teal); border-color:var(--teal-soft); display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:6px;">☁️ Cloud Storage &amp; Sync</button>
+        </div>
         <div class="storage-actions">
           <button type="button" class="sidebar-btn" id="btnSidebarBackup">Backup all</button>
           <button type="button" class="sidebar-btn" id="btnSidebarRestore">Restore</button>
@@ -3828,7 +3834,7 @@
       </div>
     </div>
 
-    <div class="dash-kpi-grid" id="analyticsKpis" style="margin-bottom:24px;">
+    <div class="dash-kpis" id="analyticsKpis" style="margin-bottom:24px;">
       <!-- Dynamic KPI cards: Total Audits, Latest Score & Grade, Average Score, Trajectory Delta, CAPA Resolution Rate -->
     </div>
 
@@ -4477,6 +4483,17 @@
   </div>
 
   <div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
+
+  <!-- ===================== Cloud Storage & Sync Modal ===================== -->
+  <div class="modal-overlay" id="cloudSyncModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cloudSyncModalTitle" style="max-width: 580px;">
+      <div class="modal-head">
+        <h2 id="cloudSyncModalTitle">Storage &amp; Cross-Device Sync</h2>
+        <button type="button" class="iconbtn" id="btnCloseCloudSyncModal" aria-label="Close">×</button>
+      </div>
+      <div id="cloudSyncModalBody"></div>
+    </div>
+  </div>
 
   <!-- ===================== New / Edit audit modal ===================== -->
   <div class="modal-overlay" id="auditModal" hidden>
@@ -6541,6 +6558,7 @@
           var raw = JSON.stringify(state);
           window.localStorage.setItem(STORE_KEY, raw);
           updateStorageMeter(raw.length);
+          scheduleAuditCloudDirectorySave();
           return true;
         } catch (e) {
           console.error("Storage save failed:", e);
@@ -6548,6 +6566,268 @@
           return false;
         }
       }
+
+      // ==========================================
+      // CLOUD STORAGE & SYNC (Google Drive, OneDrive, Dropbox, iCloud, Local)
+      // ==========================================
+      var AUDIT_CLOUD_PROVIDERS = [
+        { id: "gdrive", name: "Google Drive", hint: "Google Drive > My Drive or streamed folder", icon: "🔵" },
+        { id: "onedrive", name: "OneDrive", hint: "OneDrive folder or SharePoint synced drive", icon: "🔷" },
+        { id: "dropbox", name: "Dropbox", hint: "Dropbox synced personal or team folder", icon: "📦" },
+        { id: "icloud", name: "iCloud Drive", hint: "iCloud Drive (Finder sidebar or Files app)", icon: "☁️" },
+        { id: "local", name: "Local Drive", hint: "Local Documents or corporate network drive", icon: "📁" }
+      ];
+
+      var auditDirectoryHandle = null;
+      var _auditCloudSaveTimer = null;
+
+      function getAuditCloudProvider(id) {
+        for (var i = 0; i < AUDIT_CLOUD_PROVIDERS.length; i++) {
+          if (AUDIT_CLOUD_PROVIDERS[i].id === id) return AUDIT_CLOUD_PROVIDERS[i];
+        }
+        return null;
+      }
+
+      function renderAuditCloudProviderGrid(activeProvId) {
+        return '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(96px, 1fr)); gap:6px; margin:8px 0 12px 0;">' +
+          AUDIT_CLOUD_PROVIDERS.map(function(p) {
+            var isActive = activeProvId === p.id;
+            return '<div onclick="window.connectAuditCloudProvider(\x27' + p.id + '\x27)" ' +
+              'style="display:flex; flex-direction:column; justify-content:space-between; padding:6px 4px 5px; border-radius:6px; border:1px solid ' + (isActive ? 'var(--teal)' : 'var(--line)') + '; background:' + (isActive ? 'var(--teal-soft)' : 'var(--paper-2)') + '; cursor:pointer; text-align:center; min-height:64px; box-sizing:border-box; transition:all 0.15s ease;">' +
+                '<div>' +
+                  '<div style="font-size:16px; line-height:1.1; margin-bottom:1px;">' + p.icon + '</div>' +
+                  '<div style="font-weight:700; font-size:11px; line-height:1.2; color:' + (isActive ? 'var(--teal)' : 'var(--ink)') + ';">' + p.name + '</div>' +
+                  '<div style="font-size:9px; color:var(--slate); line-height:1.15; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + p.hint.split(' ')[0] + '</div>' +
+                '</div>' +
+                '<div style="margin-top:3px;">' +
+                  '<span style="display:inline-block; font-size:9px; font-weight:600; padding:1px 6px; border-radius:4px; ' + (isActive ? 'background:var(--teal); color:#ffffff;' : 'background:rgba(0,0,0,0.06); color:var(--slate);') + '">' +
+                    (isActive ? '✓ Active' : 'Connect') +
+                  '</span>' +
+                '</div>' +
+              '</div>';
+          }).join('') +
+        '</div>';
+      }
+
+      function updateAuditCloudSyncStatus() {
+        var provId = localStorage.getItem("auditpro_cloud_provider");
+        var folderName = localStorage.getItem("auditpro_cloud_folder_name");
+        var prov = getAuditCloudProvider(provId);
+        var syncText = document.getElementById("sidebarSyncText");
+        var syncIcon = document.getElementById("sidebarSyncIcon");
+        var syncTitle = document.getElementById("sidebarStorageTitle");
+
+        if (prov && auditDirectoryHandle) {
+          if (syncIcon) syncIcon.textContent = prov.icon;
+          if (syncText) syncText.innerHTML = '<strong style="color:var(--teal);">' + escapeHtml(prov.name) + '</strong> (' + escapeHtml(folderName || 'Synced') + ')';
+          if (syncTitle) syncTitle.textContent = prov.name + ' Sync';
+        } else if (prov && !auditDirectoryHandle) {
+          if (syncIcon) syncIcon.textContent = '☁️';
+          if (syncText) syncText.innerHTML = '<span>' + escapeHtml(prov.name) + ' (reconnect needed)</span>';
+          if (syncTitle) syncTitle.textContent = 'Local storage';
+        } else {
+          if (syncIcon) syncIcon.textContent = '○';
+          if (syncText) syncText.textContent = 'Local Only (Not Synced)';
+          if (syncTitle) syncTitle.textContent = 'Local storage';
+        }
+      }
+
+      function scheduleAuditCloudDirectorySave() {
+        if (!auditDirectoryHandle) return;
+        if (_auditCloudSaveTimer) clearTimeout(_auditCloudSaveTimer);
+        _auditCloudSaveTimer = setTimeout(function() {
+          flushAuditCloudDirectorySave();
+        }, 300);
+      }
+
+      async function flushAuditCloudDirectorySave() {
+        if (!auditDirectoryHandle) return;
+        try {
+          var fileHandle = await auditDirectoryHandle.getFileHandle('audit_pro_data.json', { create: true });
+          var writable = await fileHandle.createWritable();
+          var payload = JSON.stringify({
+            version: state.version || 6,
+            exportedAt: new Date().toISOString(),
+            generator: 'Audit Pro',
+            data: state
+          }, null, 2);
+          await writable.write(payload);
+          await writable.close();
+          updateAuditCloudSyncStatus();
+        } catch (err) {
+          console.warn('Cloud directory save error:', err);
+        }
+      }
+
+      function renderCloudSyncModalContent() {
+        var el = document.getElementById("cloudSyncModalBody");
+        if (!el) return;
+        var provId = localStorage.getItem("auditpro_cloud_provider");
+        var folderName = localStorage.getItem("auditpro_cloud_folder_name") || "";
+        var prov = getAuditCloudProvider(provId);
+        var isConnected = !!(prov && auditDirectoryHandle);
+
+        var statusCardHtml = "";
+        if (isConnected) {
+          statusCardHtml = 
+            '<div style="background:var(--teal-soft); border:1px solid var(--teal); border-radius:10px; padding:12px 14px; margin-bottom:14px;">' +
+              '<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">' +
+                '<div style="display:flex; align-items:center; gap:8px;">' +
+                  '<span style="font-size:22px;">' + prov.icon + '</span>' +
+                  '<div>' +
+                    '<div style="font-weight:700; font-size:13px; color:var(--teal);">' + prov.name + ' Connected</div>' +
+                    '<div style="font-size:11px; color:var(--ink);">Folder: <strong>' + escapeHtml(folderName) + '</strong> &bull; <code>audit_pro_data.json</code></div>' +
+                  '</div>' +
+                '</div>' +
+                '<span style="display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; background:#dcfce7; color:#15803d; border:1px solid #86efac;">300ms Auto-Save</span>' +
+              '</div>' +
+              '<div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">' +
+                '<button type="button" onclick="window.reconcileAuditCloudStorage()" class="btn btn-secondary btn-sm" style="font-size:11px; padding:4px 10px;">⚡ Check Updates / Reconcile</button>' +
+                '<button type="button" onclick="window.connectAuditCloudProvider(\x27' + provId + '\x27)" class="btn btn-secondary btn-sm" style="font-size:11px; padding:4px 10px;">Choose Another Folder</button>' +
+                '<button type="button" onclick="window.disconnectAuditCloudStorage()" class="btn btn-ghost btn-sm danger-text" style="font-size:11px; padding:4px 10px;">Disconnect</button>' +
+              '</div>' +
+            '</div>';
+        } else {
+          statusCardHtml = 
+            '<div style="background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:14px;">' +
+              '<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">' +
+                '<div>' +
+                  '<div style="font-weight:700; font-size:13px; color:var(--ink);">○ Browser Local Storage Only</div>' +
+                  '<div style="font-size:11px; color:var(--slate); margin-top:2px;">Your audits are currently saved inside this browser only. Connect a cloud folder for continuous auto-save across your devices.</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+        }
+
+        var providersHtml = 
+          '<div>' +
+            '<div style="font-size:12px; font-weight:700; color:var(--ink); margin-bottom:2px;">Cloud Storage Providers</div>' +
+            '<div style="font-size:11px; color:var(--slate); margin-bottom:8px;">Select your cloud storage service for automatic background syncing:</div>' +
+            renderAuditCloudProviderGrid(provId) +
+          '</div>';
+
+        var backupHtml = 
+          '<div style="margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">' +
+            '<div style="font-size:11px; color:var(--slate);">Standalone Offline Backups</div>' +
+            '<div style="display:flex; gap:8px;">' +
+              '<button type="button" onclick="window.exportAllAuditsPackage()" class="btn btn-secondary btn-sm" style="font-size:11px; padding:4px 10px;">💾 Backup All (.json)</button>' +
+              '<button type="button" onclick="document.getElementById(\x27btnSidebarRestore\x27).click(); window.closeCloudSyncModal();" class="btn btn-secondary btn-sm" style="font-size:11px; padding:4px 10px;">📂 Restore Backup</button>' +
+            '</div>' +
+          '</div>';
+
+        el.innerHTML = statusCardHtml + providersHtml + backupHtml;
+      }
+
+      function openCloudSyncModal() {
+        renderCloudSyncModalContent();
+        var modal = document.getElementById("cloudSyncModal");
+        if (modal) {
+          modal.hidden = false;
+          document.body.classList.add("modal-open");
+        }
+      }
+
+      function closeCloudSyncModal() {
+        var modal = document.getElementById("cloudSyncModal");
+        if (modal) {
+          modal.hidden = true;
+          document.body.classList.remove("modal-open");
+        }
+      }
+
+      async function connectAuditCloudProvider(provId) {
+        if (!window.showDirectoryPicker) {
+          showToast("File System Access API is not supported in this browser. Please use Chrome, Edge, or Brave.", 4000);
+          return;
+        }
+        try {
+          var dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+          auditDirectoryHandle = dirHandle;
+          var folderName = dirHandle.name || 'Synced Folder';
+          localStorage.setItem('auditpro_cloud_provider', provId);
+          localStorage.setItem('auditpro_cloud_folder_name', folderName);
+          
+          try {
+            var fileHandle = await dirHandle.getFileHandle('audit_pro_data.json');
+            var file = await fileHandle.getFile();
+            var text = await file.text();
+            if (text && text.trim().length > 10) {
+              var parsed = JSON.parse(text);
+              var importedData = parsed.data || parsed;
+              if (importedData && importedData.audits && Array.isArray(importedData.audits)) {
+                var confirmed = confirm("Found existing Audit Pro data (" + importedData.audits.length + " audits) in " + folderName + ".\n\nClick OK to load data from this cloud folder, or Cancel to overwrite cloud folder with your current local data.");
+                if (confirmed) {
+                  state = normalizeState(importedData);
+                  saveState();
+                  if (typeof renderHome === "function") renderHome();
+                  if (typeof renderDashboard === "function") renderDashboard();
+                } else {
+                  await flushAuditCloudDirectorySave();
+                }
+              } else {
+                await flushAuditCloudDirectorySave();
+              }
+            } else {
+              await flushAuditCloudDirectorySave();
+            }
+          } catch (e) {
+            await flushAuditCloudDirectorySave();
+          }
+          
+          updateAuditCloudSyncStatus();
+          renderCloudSyncModalContent();
+          showToast("Connected to " + (getAuditCloudProvider(provId) ? getAuditCloudProvider(provId).name : 'Cloud Storage') + " (" + folderName + ")", 3000);
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            console.error(err);
+            showToast("Could not connect folder: " + (err.message || err), 4000);
+          }
+        }
+      }
+
+      function disconnectAuditCloudStorage() {
+        auditDirectoryHandle = null;
+        localStorage.removeItem('auditpro_cloud_provider');
+        localStorage.removeItem('auditpro_cloud_folder_name');
+        updateAuditCloudSyncStatus();
+        renderCloudSyncModalContent();
+        showToast("Disconnected from cloud storage.", 3000);
+      }
+
+      async function reconcileAuditCloudStorage() {
+        if (!auditDirectoryHandle) return;
+        try {
+          var fileHandle = await auditDirectoryHandle.getFileHandle('audit_pro_data.json');
+          var file = await fileHandle.getFile();
+          var text = await file.text();
+          if (text) {
+            var parsed = JSON.parse(text);
+            var importedData = parsed.data || parsed;
+            if (importedData && importedData.audits && Array.isArray(importedData.audits)) {
+              state = normalizeState(importedData);
+              saveState();
+              if (typeof renderHome === "function") renderHome();
+              if (typeof renderDashboard === "function") renderDashboard();
+              showToast("Synchronized " + state.audits.length + " audits from cloud folder.", 3000);
+            }
+          }
+        } catch (e) {
+          showToast("Reconcile check: " + (e.message || 'No newer remote file'), 3000);
+        }
+      }
+
+      window.connectAuditCloudProvider = connectAuditCloudProvider;
+      window.disconnectAuditCloudStorage = disconnectAuditCloudStorage;
+      window.reconcileAuditCloudStorage = reconcileAuditCloudStorage;
+      window.closeCloudSyncModal = closeCloudSyncModal;
+      window.openCloudSyncModal = openCloudSyncModal;
+      window.renderCloudSyncModalContent = renderCloudSyncModalContent;
+      window.updateAuditCloudSyncStatus = updateAuditCloudSyncStatus;
+      window.addEventListener("beforeunload", function() {
+        if (auditDirectoryHandle && _auditCloudSaveTimer) {
+          flushAuditCloudDirectorySave();
+        }
+      });
 
       function findAudit(id) {
         for (var i = 0; i < state.audits.length; i++) {
@@ -7214,20 +7494,27 @@
           '</article>';
       }
 
+      
+      function hideAllViews() {
+        if (typeof homeView !== "undefined" && homeView) { homeView.hidden = true; }
+        if (typeof dashboardView !== "undefined" && dashboardView) { dashboardView.hidden = true; }
+        if (typeof analyticsView !== "undefined" && analyticsView) { analyticsView.hidden = true; }
+        if (typeof templatesView !== "undefined" && templatesView) { templatesView.hidden = true; }
+        if (typeof manualView !== "undefined" && manualView) { manualView.hidden = true; }
+        if (typeof sessionView !== "undefined" && sessionView) { sessionView.hidden = true; }
+        if (typeof summaryView !== "undefined" && summaryView) { summaryView.hidden = true; }
+        if (typeof reportView !== "undefined" && reportView) { reportView.hidden = true; }
+        if (typeof editorView !== "undefined" && editorView) { editorView.hidden = true; }
+        if (typeof actionsView !== "undefined" && actionsView) { actionsView.hidden = true; }
+        if (typeof practicesView !== "undefined" && practicesView) { practicesView.hidden = true; }
+      }
+
       function renderHome() {
         screen = "home";
         updateShell();
         document.body.classList.remove("print-report");
+        hideAllViews();
         homeView.hidden = false;
-        sessionView.hidden = true;
-        summaryView.hidden = true;
-        editorView.hidden = true;
-        actionsView.hidden = true;
-        practicesView.hidden = true;
-        reportView.hidden = true;
-        templatesView.hidden = true;
-        dashboardView.hidden = true;
-        manualView.hidden = true;
         btnBackHome.hidden = true;
         saveStatusEl.hidden = true;
 
@@ -7423,17 +7710,8 @@
         screen = "dashboard";
         updateShell();
         document.body.classList.remove("print-report");
-        homeView.hidden = true;
-        sessionView.hidden = true;
-        summaryView.hidden = true;
-        editorView.hidden = true;
-        actionsView.hidden = true;
-        practicesView.hidden = true;
-        reportView.hidden = true;
-        templatesView.hidden = true;
-        manualView.hidden = true;
+        hideAllViews();
         dashboardView.hidden = false;
-        if (window.analyticsView) { analyticsView.hidden = true; }
         btnBackHome.hidden = true;
         saveStatusEl.hidden = true;
 
@@ -7887,17 +8165,8 @@
         screen = "manual";
         updateShell();
         document.body.classList.remove("print-report");
-        homeView.hidden = true;
-        sessionView.hidden = true;
-        summaryView.hidden = true;
-        editorView.hidden = true;
-        actionsView.hidden = true;
-        practicesView.hidden = true;
-        reportView.hidden = true;
-        templatesView.hidden = true;
-        dashboardView.hidden = true;
+        hideAllViews();
         manualView.hidden = false;
-        if (window.analyticsView) { analyticsView.hidden = true; }
         btnBackHome.hidden = true;
         saveStatusEl.hidden = true;
 
@@ -7967,16 +8236,7 @@
         screen = "session";
         updateShell();
         document.body.classList.remove("print-report");
-        homeView.hidden = true;
-        if (window.analyticsView) { analyticsView.hidden = true; }
-        summaryView.hidden = true;
-        editorView.hidden = true;
-        actionsView.hidden = true;
-        practicesView.hidden = true;
-        reportView.hidden = true;
-        templatesView.hidden = true;
-        dashboardView.hidden = true;
-        manualView.hidden = true;
+        hideAllViews();
         sessionView.hidden = false;
         btnBackHome.hidden = false;
         saveStatusEl.hidden = false;
@@ -8569,16 +8829,7 @@
         screen = "summary";
         updateShell();
         document.body.classList.remove("print-report");
-        homeView.hidden = true;
-        if (window.analyticsView) { analyticsView.hidden = true; }
-        sessionView.hidden = true;
-        editorView.hidden = true;
-        actionsView.hidden = true;
-        practicesView.hidden = true;
-        reportView.hidden = true;
-        templatesView.hidden = true;
-        dashboardView.hidden = true;
-        manualView.hidden = true;
+        hideAllViews();
         summaryView.hidden = false;
         btnBackHome.hidden = false;
         saveStatusEl.hidden = true;
@@ -9477,17 +9728,8 @@
 
         screen = "editor";
         updateShell();
-        homeView.hidden = true;
-        if (window.analyticsView) { analyticsView.hidden = true; }
-        sessionView.hidden = true;
-        summaryView.hidden = true;
-        actionsView.hidden = true;
-        practicesView.hidden = true;
-        reportView.hidden = true;
+        hideAllViews();
         editorView.hidden = false;
-        templatesView.hidden = true;
-        dashboardView.hidden = true;
-        manualView.hidden = true;
         btnBackHome.hidden = false;
         saveStatusEl.hidden = true;
 
@@ -9984,13 +10226,7 @@
         screen = "templates";
         updateShell();
         document.body.classList.remove("print-report");
-        homeView.hidden = true;
-        sessionView.hidden = true;
-        summaryView.hidden = true;
-        editorView.hidden = true;
-        actionsView.hidden = true;
-        practicesView.hidden = true;
-        reportView.hidden = true;
+        hideAllViews();
         templatesView.hidden = false;
         btnBackHome.hidden = false;
         saveStatusEl.hidden = true;
@@ -10229,17 +10465,8 @@
         flushSave();
         screen = "actions";
         updateShell();
-        homeView.hidden = true;
-        if (window.analyticsView) { analyticsView.hidden = true; }
-        sessionView.hidden = true;
-        summaryView.hidden = true;
-        editorView.hidden = true;
-        practicesView.hidden = true;
-        reportView.hidden = true;
+        hideAllViews();
         actionsView.hidden = false;
-        templatesView.hidden = true;
-        dashboardView.hidden = true;
-        manualView.hidden = true;
         btnBackHome.hidden = false;
         saveStatusEl.hidden = true;
 
@@ -10483,17 +10710,8 @@
         flushSave();
         screen = "practices";
         updateShell();
-        homeView.hidden = true;
-        if (window.analyticsView) { analyticsView.hidden = true; }
-        sessionView.hidden = true;
-        summaryView.hidden = true;
-        editorView.hidden = true;
-        actionsView.hidden = true;
-        reportView.hidden = true;
+        hideAllViews();
         practicesView.hidden = false;
-        templatesView.hidden = true;
-        dashboardView.hidden = true;
-        manualView.hidden = true;
         btnBackHome.hidden = false;
         saveStatusEl.hidden = true;
 
@@ -11130,17 +11348,8 @@
         screen = "analytics";
         updateShell();
         document.body.classList.remove("print-report");
-        homeView.hidden = true;
-        sessionView.hidden = true;
-        summaryView.hidden = true;
-        editorView.hidden = true;
-        actionsView.hidden = true;
-        practicesView.hidden = true;
-        reportView.hidden = true;
-        templatesView.hidden = true;
-        manualView.hidden = true;
-        dashboardView.hidden = true;
-        if (window.analyticsView) { analyticsView.hidden = false; }
+        hideAllViews();
+        analyticsView.hidden = false;
 
         var supplierMap = {};
         var factoryMap = {};
@@ -13121,6 +13330,22 @@
       if (btnSidebarBackup) {
         btnSidebarBackup.addEventListener("click", exportAllAuditsPackage);
       }
+      var btnSidebarCloudSync = document.getElementById("btnSidebarCloudSync");
+      if (btnSidebarCloudSync) {
+        btnSidebarCloudSync.addEventListener("click", openCloudSyncModal);
+      }
+      var btnCloseCloudSyncModal = document.getElementById("btnCloseCloudSyncModal");
+      if (btnCloseCloudSyncModal) {
+        btnCloseCloudSyncModal.addEventListener("click", closeCloudSyncModal);
+      }
+      var cloudSyncModal = document.getElementById("cloudSyncModal");
+      if (cloudSyncModal) {
+        cloudSyncModal.addEventListener("click", function (e) {
+          if (e.target === cloudSyncModal) {
+            closeCloudSyncModal();
+          }
+        });
+      }
       if (btnSidebarRestore) {
         btnSidebarRestore.addEventListener("click", function () {
           auditPackageInput.click();
@@ -13271,6 +13496,7 @@
 
       renderDashboard();
       updateStorageMeter();
+      updateAuditCloudSyncStatus();
 
       // Photos live in IndexedDB. Load them now so thumbnails are available
       // when a session, CAP, or good-practice screen opens.
